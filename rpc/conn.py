@@ -31,6 +31,9 @@ class _conn:
 
         res = requests.request("POST", self.url, headers=self.header,
                                data=json.dumps(self.payload))
+        if res.status_code != 200:
+            print("unexpected, post to %s failed, status_code=%d" % (self.name, res.status_code))
+            return
         return self.parse_result(json.loads(res.text)["result"])
 
 
@@ -58,7 +61,8 @@ class _conns:
         ress = []
         for idx, val in enumerate(self.conns):
             res = val.post(method, params)
-            ress.append(res)
+            if res != None:
+                ress.append(res)
         return ress
 
     def do_check_heads(self):
