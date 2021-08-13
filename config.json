@@ -1,0 +1,17 @@
+[
+  {
+    "name": "lotus",
+    "url": "http://192.168.1.148:1234/rpc/v0",
+    "token": null
+  },
+  {
+    "name": "venus-release",
+    "url": "http://120.78.159.125:88/rpc/v0",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
+  },
+  {
+    "name": "venus-sync-opt",
+    "url": "http://192.168.1.125:1238/rpc/v0",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.Pw1ycO179xJO-0OPPfrmUIYsiydJSscXr1drhX2l-CM"
+  }
+]
