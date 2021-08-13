@@ -74,10 +74,10 @@ class _conns:
                 break
 
         if matchs:
-            print('expected, height : %d matches\n' % (res[0]['height']))
+            print('expected, height : %d, 100%%-match\n' % (res[0]['height']))
             return
 
-        print('unexpected, height: %d not matches' % (res[0]['height'],))
+        print('unexpected, height: %d mis-match' % (res[0]['height'],))
         for idx, val in enumerate(res):
             print("|----%s--------\n|-chain_head: height:%d\n|-blocks:%s" % (
                 val['name'], val['height'], val['cids']))
