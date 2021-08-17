@@ -1,5 +1,27 @@
 import json
 import requests
+from threading import Thread
+
+
+class _thread(Thread):
+    def __init__(self, func, args=()):
+        super(_thread, self).__init__()
+        self.func = func
+        self.args = args
+
+    def run(self):
+        try:
+            self.result = self.func(*self.args)
+        except Exception as e:
+            print(e)
+
+    def get_result(self):
+        try:
+            Thread.join(self)
+            return self.result
+        except Exception as e:
+            print("get result, failed:%s\n" % (e))
+            return None
 
 
 class _conn:
@@ -32,7 +54,8 @@ class _conn:
         res = requests.request("POST", self.url, headers=self.header,
                                data=json.dumps(self.payload))
         if res.status_code != 200:
-            print("unexpected, post to %s failed, status_code=%d" % (self.name, res.status_code))
+            print("unexpected, post to %s failed, status_code=%d" % (
+                self.name, res.status_code))
             return
         return self.parse_result(json.loads(res.text)["result"])
 
@@ -59,10 +82,17 @@ class _conns:
 
     def post(self, method, params=None):
         ress = []
+        threads = []
         for idx, val in enumerate(self.conns):
-            res = val.post(method, params)
-            if res != None:
-                ress.append(res)
+            t = _thread(func=val.post, args=(method, params))
+            threads.append(t)
+            t.start()
+
+        for index, t in enumerate(threads):
+            r = t.get_result()
+            if r is not None:
+                ress.append(r)
+
         return ress
 
     def do_check_heads(self):

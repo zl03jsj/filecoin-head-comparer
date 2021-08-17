@@ -11,7 +11,7 @@ conns = _conns()
 for c in conn_cfgs:
     conns.insert(_conn(c['name'], c['url'], c['token']))
 
-catch_exeptions = False
+catch_exeptions = True
 if __name__ == "__main__":
     print('____________check chain head match with following nodes____________')
     for idx, c in enumerate(conns.conns):
