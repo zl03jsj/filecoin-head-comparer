@@ -1,0 +1,12 @@
+{
+  "Version": 0,
+  "To": "f0874295",
+  "From": "f1vtgq6rbyqmwe55bnh2rwvkfheryioemb3uj6vuy",
+  "Nonce": 1093,
+  "Value": "0",
+  "GasLimit": 3045308,
+  "GasFeeCap": "5000000000",
+  "GasPremium": "100338",
+  "Method": 2,
+  "Params": "hEMAwhlAEEyBSgAQQ1YaiCkwAAA="
+}
