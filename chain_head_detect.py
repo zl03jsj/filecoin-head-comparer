@@ -41,23 +41,30 @@ def loop_check_apis():
     while True:
         try:
             heads, matched = conn_manager.do_check_heads()
-            if not matched: continue
+            if not matched:
+                sleep(5)
+                continue
             tipset = heads[0]
             # conn_manager.do_check_StateGetActor(tipset, miners)
-            conn_manager.do_check_EstimateGas(tipset)
-            # conns.do_check_WalletBalance(tipset, actors)
-            # conns.do_check_ChainGetRandomnessFromTickets(tipset)
-            # conns.do_check_CheckChainGetRandomnessFromBeacon(tipset)
-            # conns.do_check_ChainGetBlockMessages(tipset)
-            # conns.do_check_StateMinerStuff(tipset, tipset, miners)
-            # conns.do_check_StateMinerSectorAllocated(tipset, miners, 900, 1000)
-            # conns.do_check_StateMinerSectorsStuff(tipset, miners)
-            # conns.do_check_StateMinerSectorAllocated(tipset, addresses, 900000000000, 900000000010)
+            # conn_manager.do_check_EstimateGas(tipset)
+            # conn_manager.do_check_WalletBalance(tipset, actors)
+            # conn_manager.do_check_ChainGetParentReceipts(tipset)
+            # conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
+            # conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
+            # conn_manager.do_check_ChainGetBlockMessages(tipset)
+            conn_manager.do_check_StateMinerStuff(tipset, miners)
+            # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
+            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900, 1000)
+            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000, 900000000010)
+            # conn_manager.do_check_getbaseinfo(tipset, miners)
+            # conn_manager.do_check_WalletBalance(tipset, actors)
+            # conn_manager.do_check_EstimateGas(tipset)
+            # conn_manager.do_check_StateCirculatingSupply(tipset)
         except Exception as e:
             logging.exception(e)
+        sleep(5)
 
-
-sleep(5)
 
 if __name__ == "__main__":
     loop_check_apis()
+    # loop_check_heads()

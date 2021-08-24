@@ -63,7 +63,7 @@ class _conn:
                                data=json.dumps(self.payload))
         if res.status_code != 200:
             res_obj = json.loads(res.text)
-            print("unexpected, post to %s failed, status_code=%d, error=%s" % (
+            print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (
                 self.name, res.status_code, res_obj['error']))
 
             return
@@ -80,11 +80,9 @@ class _conn:
 
 
 def to_josn(d, exclude=[]):
-    obj = d.copy()
-    for path in exclude:
-        path = path.split('/')
-        del reduce(op.getitem, path[:-1], obj)[path[-1]]
-    return json.dumps(obj, default=lambda o: o.__dict__, sort_keys=True)
+    for k in exclude:
+        if k in d.keys(): del d[k]
+    return json.dumps(d, default=lambda o: o.__dict__, sort_keys=True).lower()
 
 
 class _conns_manager:
@@ -116,7 +114,6 @@ class _conns_manager:
             t.start()
         for index, t in enumerate(threads):
             ress.append(t.get_result())
-        print("\n")
         return ress
 
     def do_check_heads(self):
@@ -140,6 +137,7 @@ class _conns_manager:
                 print("|- %+20s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
 
+        print()
         return res, matchs
 
     def do_check_result(self, tipset, method, params, displayName=None, skip=[]):
@@ -152,16 +150,15 @@ class _conns_manager:
 
         for idx in range(1, len(res)):
             d = to_josn(res[idx], skip)
-            if d_0 != d:
-                matchs = False
-                break
+            if d_0 != d: matchs = False
 
         print('|-- method:%s, height:%d, result:%s\n|-- params:%s' % (
             displayName if displayName is not None else method,
             tipset['height'], '100-%match' if matchs else 'mis-match', params))
+
         if not matchs:
-            for idx, res in enumerate(res):
-                print('%d->%s' % (idx, res))
+            for idx, r in enumerate(res):
+                print('%d->%s' % (idx, r))
             print('\n')
 
         return res[0] if matchs else res, matchs
@@ -189,13 +186,24 @@ class _conns_manager:
                                  displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
+        tsk = tipset['cids']
+        params = ['', tsk]
+
         for _, miner in enumerate(addresses):
-            self.do_check_result(tipset, "Filecoin.StateMinerRecoveries",
-                                 [miner, tipset['blocks'][0]['Parents']])
-            self.do_check_result(tipset, "Filecoin.StateMinerFaults",
-                                 [miner, tipset['blocks'][0]['Parents']])
-            self.do_check_result(tipset, "Filecoin.StateMinerInfo",
-                                 [miner, tipset['blocks'][0]['Parents']])
+            params[0] = miner
+            self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
+            self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
+            self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
+            self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
+            self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
+            # for con in self.conns:
+            #     if con.name == 'lotus': break
+            # if con is None: return
+            #
+            # state = con.post('Filecoin.StateReadState', params)
+            # if 'State' not in state.keys(): continue
+            # pms_id = state['State']['PreCommittedSectors']
+
 
     def do_check_StateGetActor(self, tipset, addresses):
         for _, actor in enumerate(addresses):
@@ -209,10 +217,10 @@ class _conns_manager:
                 res, matches = self.do_check_result(tipset,
                                                     "Filecoin.StateMinerSectorAllocated",
                                                     [miner, i, parent_key])
-                if res == True:
-                    res, matches = self.do_check_result(tipset,
-                                                        'Filecoin.StateSectorGetInfo',
-                                                        [miner, i, parent_key])
+                if matches:
+                    self.do_check_result(tipset,
+                                         'Filecoin.StateSectorGetInfo',
+                                         [miner, i, parent_key])
 
     def do_check_StateMinerSectorsStuff(self, tipset, addresses):
         parent_key = tipset['blocks'][0]['Parents']
@@ -237,9 +245,20 @@ class _conns_manager:
 
                 for pt in partitions:
                     params = [miner, pt['ActiveSectors'], parent_key]
-                    sectors, _ = self.do_check_result(tipset,
-                                                      'Filecoin.StateMinerSectors',
-                                                      params)
+                    sectors, matches = self.do_check_result(tipset,
+                                                            'Filecoin.StateMinerSectors',
+                                                            params)
+                    # if not matches: continue
+                    # for sector in sectors:
+                    #     params = [miner, sector['SectorNumber'], parent_key]
+                    #     sector_pre_commit_info, matches = self.do_check_result(tipset,
+                    #                                                            'Filecoin.StateSectorPreCommitInfo',
+                    #                                                            params)
+                    #     if not matches: continue
+                    #     self.do_check_result(tipset,
+                    #                          "Filecoin.StateMinerInitialPledgeCollateral",
+                    #                          [miner, sector_pre_commit_info['Info'],
+                    #                           parent_key])
 
     def do_check_WalletBalance(self, tipset, actors):
         actors = actors.copy()
@@ -271,20 +290,41 @@ class _conns_manager:
 
         msg['Nonce'] = actor['Nonce']
         msg, matches = self.do_check_result(tipset, 'Filecoin.GasEstimateMessageGas',
-                                            [msg, None, tipset['cids']], skip=['CID'])
+                                            [msg,
+                                             {'MaxFee': '0', 'GasOverEstimation': 0},
+                                             tipset['cids']], skip=['CID'])
         print("|- EstimateMessageGas returns:%s\n" % (msg))
         return
 
-    def do_check_estimateGasPremium(self):
+    def do_check_getbaseinfo(self, tipset, miners=[]):
+        miners.extend(['f02438', 'f0131822'])
+        block = tipset['blocks'][0]
+        for miner in miners:
+            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
+                                 [miner, block['Height'], block['Parents']])
         return
 
-    def do_check_esitmateMessageGas(self):
-        return
+    def do_check_StateCirculatingSupply(self, tipset):
+        params = [tipset['cids']]
+        self.do_check_result(tipset, 'Filecoin.StateCirculatingSupply', params)
+        self.do_check_result(tipset, 'Filecoin.StateVMCirculatingSupplyInternal', params)
 
-    def do_check_esitmateFeeCap(self):
-        return
+    def do_check_ChainGetParentReceipts(self, tipset):
+        params = [tipset['cids'][0]]
+        self.do_check_result(tipset, 'Filecoin.ChainGetParentReceipts', params)
 
-    def do_check_getbaseinfo(self):
-        return
+    def do_check_StateReadState_venus_not_exist_this_api(self, tipset, actors):
+        params = ['', tipset['cids']]
+        for actor in actors:
+            params[0] = actor
+            self.do_check_result(tipset, 'Filecoin.StateReadState', params)
 
-# wallet balance 会出错
+# MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
+# SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
+# ChainGetParentReceipts(ctx context.Context, blockCid cid.Cid) ([] * types.MessageReceipt, error)
+# StateMinerPower(context.Context, address.Address, types.TipSetKey)(*MinerPower, error)
+# StateMinerInitialPledgeCollateral(context.Context, address.Address, miner.SectorPreCommitInfo, types.TipSetKey)( types.BigInt, error)
+# StateMinerAvailableBalance(context.Context, address.Address, types.TipSetKey)( types.BigInt, error)
+# StateSectorPreCommitInfo(context.Context, address.Address, abi.SectorNumber, types.TipSetKey)(miner.SectorPreCommitOnChainInfo, error)
+# StateWaitMsg(ctx context.Context, cid cid.Cid, confidence uint64, limit abi.ChainEpoch, allowReplaced bool) (*MsgLookup, error)
+# StateMarketBalance(context.Context, address.Address, types.TipSetKey)(MarketBalance, error)
