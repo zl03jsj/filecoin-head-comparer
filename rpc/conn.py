@@ -198,12 +198,11 @@ class _conns_manager:
             self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
             # for con in self.conns:
             #     if con.name == 'lotus': break
-            # if con is None: return
+            # if con is None: continue
             #
             # state = con.post('Filecoin.StateReadState', params)
             # if 'State' not in state.keys(): continue
             # pms_id = state['State']['PreCommittedSectors']
-
 
     def do_check_StateGetActor(self, tipset, addresses):
         for _, actor in enumerate(addresses):
