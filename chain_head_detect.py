@@ -3,6 +3,7 @@ import json
 from rpc.conn import _conn, _conns_manager
 from time import sleep
 import logging
+import sys, getopt
 
 with open("./config.json", 'r') as f:
     conn_cfgs = json.load(f)
@@ -65,6 +66,24 @@ def loop_check_apis():
         sleep(5)
 
 
+def main(argv):
+    inputfile = ''
+    outputfile = ''
+    try:
+        opts, args = getopt.getopt(argv, "hia:", ["api="])
+    except getopt.GetoptError:
+        print('test.py -i <inputfile> -o <outputfile>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('python3 -u ./chain_head_detect.py > chain_head.log 2>&1 &')
+            sys.exit()
+        elif opt in ("-a", "--api="):
+            check_api = arg
+
+
 if __name__ == "__main__":
-    loop_check_apis()
-    # loop_check_heads()
+    if len(sys.argv) == 1:
+        loop_check_heads()
+    else:
+        loop_check_apis()
