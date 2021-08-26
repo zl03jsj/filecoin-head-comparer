@@ -57,7 +57,7 @@ def loop_check_apis():
             tipset = heads[0]
             # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
-            # conn_manager.do_check_StateMinerStuff(tipset, miners)
+            conn_manager.do_check_StateMinerStuff(tipset, miners)
             # conn_manager.do_check_getbaseinfo(tipset, miners)
             # conn_manager.do_check_StateGetActor(tipset, miners)
             # conn_manager.do_check_EstimateGas(tipset)
