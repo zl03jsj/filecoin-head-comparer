@@ -81,7 +81,7 @@ class _conn:
 
 
 def to_josn(d, exclude=[]):
-    d = d if isinstance(d, int) or isinstance(d, str) else d.copy()
+    d = d if d is None or isinstance(d, int) or isinstance(d, str) else d.copy()
     if len(exclude) > 0 and isinstance(d, dict):
         for k in exclude:
             if k in d.keys(): del d[k]
@@ -225,19 +225,24 @@ class _conns_manager:
     def do_check_StateGetActor(self, tipset, addresses):
         for _, actor in enumerate(addresses):
             self.do_check_result(tipset, "Filecoin.StateGetActor",
-                                 [actor, tipset['blocks'][0]['Parents']])
+                                 [actor, tipset['cids']])
 
     def do_check_StateMinerSectorAllocated(self, tipset, addresses, start, end):
+        check_count = 10
         for _, miner in enumerate(addresses):
-            for i in range(start, end, (end - start) / 20):
+            for i in range(start, end,
+                           int((
+                                       end - start) / check_count)) if end - start > check_count else 1:
                 parent_key = tipset['blocks'][0]['Parents']
                 res, matches = self.do_check_result(tipset,
                                                     "Filecoin.StateMinerSectorAllocated",
                                                     [miner, i, parent_key])
                 if matches:
-                    self.do_check_result(tipset,
-                                         'Filecoin.StateSectorGetInfo',
-                                         [miner, i, parent_key])
+                    res, matches = self.do_check_result(tipset,
+                                                        'Filecoin.StateSectorGetInfo',
+                                                        [miner, i, parent_key])
+                    if res['result'] is not None and matches:
+                        print('|--    StateSectorGetInfo:%s' % (res['result']))
 
     def do_check_StateMinerSectorsStuff(self, tipset, addresses):
         miners = addresses[:2]
@@ -264,9 +269,9 @@ class _conns_manager:
 
                 for pt in partitions['result']:
                     params = [miner, pt['ActiveSectors'], parent_key]
-                    sectors, matches = self.do_check_result(tipset,
-                                                            'Filecoin.StateMinerSectors',
-                                                            params)
+                    self.do_check_result(tipset,
+                                         'Filecoin.StateMinerSectors',
+                                         params)
                     # if not matches: continue
                     # for sector in sectors:
                     #     params = [miner, sector['SectorNumber'], parent_key]
@@ -338,16 +343,15 @@ class _conns_manager:
             params[0] = actor
             self.do_check_result(tipset, 'Filecoin.StateReadState', params)
 
-# MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
-# SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
-# ChainGetParentReceipts(ctx context.Context, blockCid cid.Cid) ([] * types.MessageReceipt, error)
-# StateMinerPower(context.Context, address.Address, types.TipSetKey)(*MinerPower, error)
-# StateMinerInitialPledgeCollateral(context.Context, address.Address, miner.SectorPreCommitInfo, types.TipSetKey)( types.BigInt, error)
-# StateMinerAvailableBalance(context.Context, address.Address, types.TipSetKey)( types.BigInt, error)
-# StateSectorPreCommitInfo(context.Context, address.Address, abi.SectorNumber, types.TipSetKey)(miner.SectorPreCommitOnChainInfo, error)
-# StateWaitMsg(ctx context.Context, cid cid.Cid, confidence uint64, limit abi.ChainEpoch, allowReplaced bool) (*MsgLookup, error)
-# StateMarketBalance(context.Context, address.Address, types.TipSetKey)(MarketBalance, error)
+    # MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
+    # SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
+    # ChainGetParentReceipts(ctx context.Context, blockCid cid.Cid) ([] * types.MessageReceipt, error)
+    # StateMinerPower(context.Context, address.Address, types.TipSetKey)(*MinerPower, error)
+    # StateMinerInitialPledgeCollateral(context.Context, address.Address, miner.SectorPreCommitInfo, types.TipSetKey)( types.BigInt, error)
+    # StateMinerAvailableBalance(context.Context, address.Address, types.TipSetKey)( types.BigInt, error)
+    # StateSectorPreCommitInfo(context.Context, address.Address, abi.SectorNumber, types.TipSetKey)(miner.SectorPreCommitOnChainInfo, error)
+    # StateWaitMsg(ctx context.Context, cid cid.Cid, confidence uint64, limit abi.ChainEpoch, allowReplaced bool) (*MsgLookup, error)
+    # StateMarketBalance(context.Context, address.Address, types.TipSetKey)(MarketBalance, error)
 
-
-# Filecoin.StateMinerPower
-# Filecoin.StateMinerAvailableBalance
+    # Filecoin.StateMinerPower
+    # Filecoin.StateMinerAvailableBalance

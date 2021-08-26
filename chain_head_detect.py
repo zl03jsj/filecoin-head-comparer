@@ -55,6 +55,13 @@ def loop_check_apis():
                 continue
 
             tipset = heads[0]
+            # conn_manager.do_check_StateMinerStuff(tipset, miners)
+            # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
+
+            conn_manager.do_check_getbaseinfo(tipset, miners)
+
+            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
+
             # conn_manager.do_check_StateGetActor(tipset, miners)
             # conn_manager.do_check_EstimateGas(tipset)
             # conn_manager.do_check_WalletBalance(tipset, actors)
@@ -62,10 +69,7 @@ def loop_check_apis():
             # conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
             # conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
             # conn_manager.do_check_ChainGetBlockMessages(tipset)
-            # conn_manager.do_check_StateMinerStuff(tipset, miners)
-            conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
-            conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900, 1000)
-            conn_manager.do_check_getbaseinfo(tipset, miners)
+
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000, 900000000010)
             # conn_manager.do_check_WalletBalance(tipset, actors)
             # conn_manager.do_check_EstimateGas(tipset)
