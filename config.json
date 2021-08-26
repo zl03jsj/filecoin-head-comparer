@@ -11,7 +11,7 @@
   },
   {
     "enable": "true",
-    "name": "venus-optmize",
+    "name": "venus-optimize",
     "url": "http://192.168.1.125:1238/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.poM0IwRxWDs8jEvKII4d8MGuJS5u8hPVzW0SyJ_EqjM"
   }

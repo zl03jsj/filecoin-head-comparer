@@ -192,10 +192,11 @@ class _conns_manager:
         tsk = tipset['cids']
         params = ['', tsk]
         self.do_check_result(tipset, "Filecoin.StateVMCirculatingSupplyInternal", [tsk])
-        self.do_check_result(tipset, "Filecoin.StateCirculatingSupply", [tsk])
-        self.do_check_result(tipset, "Filecoin.StateMarketDeals", [tsk])
         self.do_check_result(tipset, "Filecoin.StateListMiners", [tsk])
-        self.do_check_result(tipset, "Filecoin.StateListActors", [tsk])
+        # following api are very slow, or returns huge size data
+        # self.do_check_result(tipset, "Filecoin.StateMarketDeals", [tsk])
+        # self.do_check_result(tipset, "Filecoin.StateCirculatingSupply", [tsk])
+        # self.do_check_result(tipset, "Filecoin.StateListActors", [tsk])
         for _, miner in enumerate(addresses):
             params[0] = miner
             self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
@@ -205,9 +206,10 @@ class _conns_manager:
             self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
             self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
             self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
             self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
             self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
+            # don't check slow api
+            # self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
 
         # for con in self.conns:
         #     if con.name == 'lotus': break

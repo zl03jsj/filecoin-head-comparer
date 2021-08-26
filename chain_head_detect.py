@@ -68,7 +68,7 @@ def loop_check_apis():
             # conn_manager.do_check_getbaseinfo(tipset, miners)
             # conn_manager.do_check_WalletBalance(tipset, actors)
             # conn_manager.do_check_EstimateGas(tipset)
-            conn_manager.do_check_StateCirculatingSupply(tipset)
+            # conn_manager.do_check_StateCirculatingSupply(tipset)
         except Exception as e:
             logging.exception(e)
         sleep(3)
