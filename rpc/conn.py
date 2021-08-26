@@ -243,6 +243,7 @@ class _conns_manager:
                                                       "Filecoin.StateMinerProvingDeadline",
                                                       [miner, parent_key])
             if matches == True:
+                deadlines = deadlines['result']
                 if not 'Index' in deadlines.keys():
                     for idx, v in enumerate(deadlines):
                         print(
