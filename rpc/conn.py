@@ -189,7 +189,9 @@ class _conns_manager:
                                  displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
+        miners = addresses[:4]
         tsk = tipset['cids']
+        block = tipset['blocks'][0]
         params = ['', tsk]
         # self.do_check_result(tipset, "Filecoin.StateVMCirculatingSupplyInternal", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateListMiners", [tsk])
@@ -197,7 +199,7 @@ class _conns_manager:
         # self.do_check_result(tipset, "Filecoin.StateMarketDeals", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateCirculatingSupply", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateListActors", [tsk])
-        for _, miner in enumerate(addresses):
+        for _, miner in enumerate(miners):
             params[0] = miner
             self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
             self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
@@ -208,6 +210,8 @@ class _conns_manager:
             self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
             self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
             self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
+            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
+                                 [miner, block['Height'], block['Parents']])
             # don't check slow api
             # self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
 
@@ -225,7 +229,7 @@ class _conns_manager:
 
     def do_check_StateMinerSectorAllocated(self, tipset, addresses, start, end):
         for _, miner in enumerate(addresses):
-            for i in range(start, end):
+            for i in range(start, end, (end - start) / 20):
                 parent_key = tipset['blocks'][0]['Parents']
                 res, matches = self.do_check_result(tipset,
                                                     "Filecoin.StateMinerSectorAllocated",
@@ -258,7 +262,7 @@ class _conns_manager:
                 if partitions is None:
                     continue
 
-                for pt in partitions:
+                for pt in partitions['result']:
                     params = [miner, pt['ActiveSectors'], parent_key]
                     sectors, matches = self.do_check_result(tipset,
                                                             'Filecoin.StateMinerSectors',
