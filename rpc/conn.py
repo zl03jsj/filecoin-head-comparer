@@ -135,13 +135,16 @@ class _conns_manager:
             res[0]['height'], len(res[0]['cids']),
             '100-%match' if matchs else 'mis-match'))
 
+        same_height = True
         if False == matchs:
             for idx, v in enumerate(res):
+                if same_height and res[idx]['height'] != res[0]['height']:
+                    same_height = False
                 print("|- %+14s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
 
         print()
-        return res, matchs
+        return res, same_height, matchs
 
     def do_check_result(self, tipset, method, params, displayName=None, skip=[]):
         check_info = {'tipset': tipset, 'method': method, 'params': params}
@@ -155,7 +158,7 @@ class _conns_manager:
             d = to_josn(res[idx]['result'], skip)
             if d_0 != d: matchs = False
 
-        print('|--  method:%s, height:%d, API->%s\n|--  params:%s' % (
+        print('|--  method:%s, height:%d, API->%s\n|----  params:%s' % (
             displayName if displayName is not None else method,
             tipset['height'], '100-%match' if matchs else 'mis-match', params))
 
@@ -202,16 +205,16 @@ class _conns_manager:
         for _, miner in enumerate(miners):
             params[0] = miner
             self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
-            self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
-            self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
             self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
                                  [miner, block['Height'], block['Parents']])
+            self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
+            self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
+            # self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
             # don't check slow api
             # self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
 
@@ -312,7 +315,7 @@ class _conns_manager:
             print("|- check StateGetActor mis-match, 'estimategase' won't continue")
             return
 
-        msg['Nonce'] = actor['Nonce']
+        msg['Nonce'] = actor['result']['Nonce']
         msg, matches = self.do_check_result(tipset, 'Filecoin.GasEstimateMessageGas',
                                             [msg,
                                              {'MaxFee': '0', 'GasOverEstimation': 0},
