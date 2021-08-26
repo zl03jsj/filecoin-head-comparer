@@ -138,7 +138,7 @@ class _conns_manager:
         same_height = True
         if False == matchs:
             for idx, v in enumerate(res):
-                if res[idx]['height'] != res[0]['height']:
+                if same_height and res[idx]['height'] != res[0]['height']:
                     same_height = False
                 print("|- %+14s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
