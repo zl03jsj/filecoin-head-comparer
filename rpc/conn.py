@@ -155,7 +155,7 @@ class _conns_manager:
             d = to_josn(res[idx]['result'], skip)
             if d_0 != d: matchs = False
 
-        print('|--  method:%s, height:%d, API->%s\n|--  params:%s' % (
+        print('|--  method:%s, height:%d, API->%s\n|----  params:%s' % (
             displayName if displayName is not None else method,
             tipset['height'], '100-%match' if matchs else 'mis-match', params))
 
@@ -189,7 +189,7 @@ class _conns_manager:
                                  displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
-        miners = addresses[:4]
+        miners = addresses[:]
         tsk = tipset['cids']
         block = tipset['blocks'][0]
         params = ['', tsk]
@@ -312,7 +312,7 @@ class _conns_manager:
             print("|- check StateGetActor mis-match, 'estimategase' won't continue")
             return
 
-        msg['Nonce'] = actor['Nonce']
+        msg['Nonce'] = actor['result']['Nonce']
         msg, matches = self.do_check_result(tipset, 'Filecoin.GasEstimateMessageGas',
                                             [msg,
                                              {'MaxFee': '0', 'GasOverEstimation': 0},

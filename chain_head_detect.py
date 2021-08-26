@@ -15,8 +15,8 @@ for c in conn_cfgs:
     if 'enable' in c.keys() and c['enable'] == 'no': continue
     conn_manager.insert(_conn(c['name'], c['url'], c['token']))
 
-miners = ['f02438', 'f0127595', "f0128788", "f0127595", "f0123261", "f0135467",
-          "f0142720", ]
+miners = ['f02438', 'f0688165', 'f0724216', "f0128788", "f0127595", "f0123261",
+          "f0135467", "f0142720", ]
 accounts = [
     "f3qzprefkeragndcicaqgztojarm4pzohn7swwqtmtcx42wykpgxtz6rtpn7xsderun5kigfopv3tydhddx4na",
     "f3sfyonhd3apsolzlpl5uy2a7j7jyktekp7v365l2uqo4chmmf7zmkmsry5qru562yhetnruzflmcnldwow6uq"]
@@ -55,15 +55,13 @@ def loop_check_apis():
                 continue
 
             tipset = heads[0]
-            # conn_manager.do_check_StateMinerStuff(tipset, miners)
             # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
-
-            conn_manager.do_check_getbaseinfo(tipset, miners)
-
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
-
+            conn_manager.do_check_StateMinerStuff(tipset, miners)
+            # conn_manager.do_check_getbaseinfo(tipset, miners)
             # conn_manager.do_check_StateGetActor(tipset, miners)
             # conn_manager.do_check_EstimateGas(tipset)
+
             # conn_manager.do_check_WalletBalance(tipset, actors)
             # conn_manager.do_check_ChainGetParentReceipts(tipset)
             # conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
