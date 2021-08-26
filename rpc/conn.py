@@ -191,8 +191,8 @@ class _conns_manager:
     def do_check_StateMinerStuff(self, tipset, addresses):
         tsk = tipset['cids']
         params = ['', tsk]
-        self.do_check_result(tipset, "Filecoin.StateVMCirculatingSupplyInternal", [tsk])
-        self.do_check_result(tipset, "Filecoin.StateListMiners", [tsk])
+        # self.do_check_result(tipset, "Filecoin.StateVMCirculatingSupplyInternal", [tsk])
+        # self.do_check_result(tipset, "Filecoin.StateListMiners", [tsk])
         # following api are very slow, or returns huge size data
         # self.do_check_result(tipset, "Filecoin.StateMarketDeals", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateCirculatingSupply", [tsk])
