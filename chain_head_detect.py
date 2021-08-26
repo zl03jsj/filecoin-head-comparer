@@ -45,11 +45,11 @@ def loop_check_apis():
     while True:
         try:
             print("\n")
-            heads, matched = conn_manager.do_check_heads()
-            if not matched:
+            heads, same_height, matched = conn_manager.do_check_heads()
+            if not same_height:
                 sleep(dur)
                 continue
-            elif tipset is not None and tipset['cids'] == heads[0]['cids']:
+            elif matched and tipset is not None and tipset['cids'] == heads[0]['cids']:
                 print("|-- chain head doesn't change, don't need to compare again")
                 sleep(dur)
                 continue
@@ -57,7 +57,7 @@ def loop_check_apis():
             tipset = heads[0]
             # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
-            conn_manager.do_check_StateMinerStuff(tipset, miners)
+            # conn_manager.do_check_StateMinerStuff(tipset, miners)
             # conn_manager.do_check_getbaseinfo(tipset, miners)
             # conn_manager.do_check_StateGetActor(tipset, miners)
             # conn_manager.do_check_EstimateGas(tipset)

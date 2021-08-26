@@ -135,13 +135,17 @@ class _conns_manager:
             res[0]['height'], len(res[0]['cids']),
             '100-%match' if matchs else 'mis-match'))
 
+        same_height = True
         if False == matchs:
             for idx, v in enumerate(res):
+                if res[idx]['height'] != res[0]['height']:
+                    same_height = False
+                    break
                 print("|- %+14s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
 
         print()
-        return res, matchs
+        return res, same_height, matchs
 
     def do_check_result(self, tipset, method, params, displayName=None, skip=[]):
         check_info = {'tipset': tipset, 'method': method, 'params': params}
