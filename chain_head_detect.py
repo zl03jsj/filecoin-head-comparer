@@ -39,12 +39,20 @@ def loop_check_heads():
 
 
 def loop_check_apis():
+    dur = 3
+    tipset = {'cids': ''}
     while True:
         try:
+            print("\n")
             heads, matched = conn_manager.do_check_heads()
             if not matched:
-                sleep(5)
+                sleep(3)
                 continue
+            elif tipset is not None and tipset['cids'] == heads[0]['cids']:
+                print("|-- chain head doesn't change, don't need to compare again")
+                sleep(3)
+                continue
+
             tipset = heads[0]
             # conn_manager.do_check_StateGetActor(tipset, miners)
             # conn_manager.do_check_EstimateGas(tipset)
@@ -63,7 +71,7 @@ def loop_check_apis():
             # conn_manager.do_check_StateCirculatingSupply(tipset)
         except Exception as e:
             logging.exception(e)
-        sleep(5)
+        sleep(3)
 
 
 def main(argv):

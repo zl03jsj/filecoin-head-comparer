@@ -71,17 +71,20 @@ class _conn:
             return self.parse_head(json.loads(res.text)["result"])
         else:
             json_obj = json.loads(res.text)
+
             if 'result' in json_obj:
-                return json_obj['result']
+                return {'name': self.name, 'result': json_obj['result']}
             else:
                 print("|- method:%s returns error\n|- params:%s\n|- message:%s" % (
                     method, params, json_obj['error']['message']))
-                return json_obj['error']
+                return {'name': self.name, 'result': json_obj['error']}
 
 
 def to_josn(d, exclude=[]):
-    for k in exclude:
-        if k in d.keys(): del d[k]
+    d = d if isinstance(d, int) or isinstance(d, str) else d.copy()
+    if len(exclude) > 0 and isinstance(d, dict):
+        for k in exclude:
+            if k in d.keys(): del d[k]
     return json.dumps(d, default=lambda o: o.__dict__, sort_keys=True).lower()
 
 
@@ -128,13 +131,13 @@ class _conns_manager:
                 matchs = False
                 break
 
-        print('|--ChainHead, height:%d, block:%d, %s' % (
+        print('|-ChainHead, height:%d, block:%d, head->%s' % (
             res[0]['height'], len(res[0]['cids']),
             '100-%match' if matchs else 'mis-match'))
 
         if False == matchs:
             for idx, v in enumerate(res):
-                print("|- %+20s: height:%d, block:%d" % (
+                print("|- %+14s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
 
         print()
@@ -146,19 +149,19 @@ class _conns_manager:
 
         matchs = True
 
-        d_0 = to_josn(res[0], skip)
+        d_0 = to_josn(res[0]['result'], skip)
 
         for idx in range(1, len(res)):
-            d = to_josn(res[idx], skip)
+            d = to_josn(res[idx]['result'], skip)
             if d_0 != d: matchs = False
 
-        print('|-- method:%s, height:%d, result:%s\n|-- params:%s' % (
+        print('|--  method:%s, height:%d, API->%s\n|--  params:%s' % (
             displayName if displayName is not None else method,
             tipset['height'], '100-%match' if matchs else 'mis-match', params))
 
         if not matchs:
             for idx, r in enumerate(res):
-                print('%d->%s' % (idx, r))
+                print('%-15s->%s' % (r['name'], r['result']))
             print('\n')
 
         return res[0] if matchs else res, matchs
@@ -199,7 +202,6 @@ class _conns_manager:
             # for con in self.conns:
             #     if con.name == 'lotus': break
             # if con is None: continue
-            #
             # state = con.post('Filecoin.StateReadState', params)
             # if 'State' not in state.keys(): continue
             # pms_id = state['State']['PreCommittedSectors']
