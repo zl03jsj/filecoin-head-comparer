@@ -46,7 +46,7 @@ def loop_check_apis():
         try:
             print("\n")
             heads, same_height, matched = conn_manager.do_check_heads()
-            if not same_height:
+            if not matched:
                 sleep(dur)
                 continue
             elif matched and tipset is not None and tipset['cids'] == heads[0]['cids']:
