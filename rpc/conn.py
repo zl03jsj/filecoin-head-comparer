@@ -192,7 +192,7 @@ class _conns_manager:
                                  displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
-        miners = addresses[:]
+        miners = addresses[:4]
         tsk = tipset['cids']
         block = tipset['blocks'][0]
         params = ['', tsk]
