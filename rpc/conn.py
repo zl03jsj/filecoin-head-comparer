@@ -189,7 +189,9 @@ class _conns_manager:
                                  displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
+        miners = addresses[:4]
         tsk = tipset['cids']
+        block = tipset['blocks'][0]
         params = ['', tsk]
         # self.do_check_result(tipset, "Filecoin.StateVMCirculatingSupplyInternal", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateListMiners", [tsk])
@@ -197,7 +199,7 @@ class _conns_manager:
         # self.do_check_result(tipset, "Filecoin.StateMarketDeals", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateCirculatingSupply", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateListActors", [tsk])
-        for _, miner in enumerate(addresses):
+        for _, miner in enumerate(miners):
             params[0] = miner
             self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
             self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
@@ -208,6 +210,8 @@ class _conns_manager:
             self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
             self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
             self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
+            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
+                                 [miner, block['Height'], block['Parents']])
             # don't check slow api
             # self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
 
@@ -218,129 +222,121 @@ class _conns_manager:
         # if 'State' not in state.keys(): continue
         # pms_id = state['State']['PreCommittedSectors']
 
+    def do_check_StateGetActor(self, tipset, addresses):
+        for _, actor in enumerate(addresses):
+            self.do_check_result(tipset, "Filecoin.StateGetActor",
+                                 [actor, tipset['blocks'][0]['Parents']])
 
-def do_check_StateGetActor(self, tipset, addresses):
-    for _, actor in enumerate(addresses):
-        self.do_check_result(tipset, "Filecoin.StateGetActor",
-                             [actor, tipset['blocks'][0]['Parents']])
+    def do_check_StateMinerSectorAllocated(self, tipset, addresses, start, end):
+        for _, miner in enumerate(addresses):
+            for i in range(start, end, (end - start) / 20):
+                parent_key = tipset['blocks'][0]['Parents']
+                res, matches = self.do_check_result(tipset,
+                                                    "Filecoin.StateMinerSectorAllocated",
+                                                    [miner, i, parent_key])
+                if matches:
+                    self.do_check_result(tipset,
+                                         'Filecoin.StateSectorGetInfo',
+                                         [miner, i, parent_key])
 
+    def do_check_StateMinerSectorsStuff(self, tipset, addresses):
+        miners = addresses[:2]
+        parent_key = tipset['blocks'][0]['Parents']
+        for _, miner in enumerate(miners):
+            deadlines, matches = self.do_check_result(tipset,
+                                                      "Filecoin.StateMinerProvingDeadline",
+                                                      [miner, parent_key])
+            if matches == True:
+                deadlines = deadlines['result']
+                if not 'Index' in deadlines.keys():
+                    for idx, v in enumerate(deadlines):
+                        print(
+                            'error, method:Filecoin.StateMinerProvingDeadline, address:%s, key: Index not exist\nresult : %s' % (
+                                addresses[idx], v))
+                    return
 
-def do_check_StateMinerSectorAllocated(self, tipset, addresses, start, end):
-    for _, miner in enumerate(addresses):
-        for i in range(start, end):
-            parent_key = tipset['blocks'][0]['Parents']
-            res, matches = self.do_check_result(tipset,
-                                                "Filecoin.StateMinerSectorAllocated",
-                                                [miner, i, parent_key])
-            if matches:
-                self.do_check_result(tipset,
-                                     'Filecoin.StateSectorGetInfo',
-                                     [miner, i, parent_key])
+                partitions, _ = self.do_check_result(tipset,
+                                                     "Filecoin.StateMinerPartitions",
+                                                     [miner, deadlines['Index'],
+                                                      parent_key])
+                if partitions is None:
+                    continue
 
+                for pt in partitions['result']:
+                    params = [miner, pt['ActiveSectors'], parent_key]
+                    sectors, matches = self.do_check_result(tipset,
+                                                            'Filecoin.StateMinerSectors',
+                                                            params)
+                    # if not matches: continue
+                    # for sector in sectors:
+                    #     params = [miner, sector['SectorNumber'], parent_key]
+                    #     sector_pre_commit_info, matches = self.do_check_result(tipset,
+                    #                                                            'Filecoin.StateSectorPreCommitInfo',
+                    #                                                            params)
+                    #     if not matches: continue
+                    #     self.do_check_result(tipset,
+                    #                          "Filecoin.StateMinerInitialPledgeCollateral",
+                    #                          [miner, sector_pre_commit_info['Info'],
+                    #                           parent_key])
 
-def do_check_StateMinerSectorsStuff(self, tipset, addresses):
-    parent_key = tipset['blocks'][0]['Parents']
-    for _, miner in enumerate(addresses):
-        deadlines, matches = self.do_check_result(tipset,
-                                                  "Filecoin.StateMinerProvingDeadline",
-                                                  [miner, parent_key])
-        if matches == True:
-            if not 'Index' in deadlines.keys():
-                for idx, v in enumerate(deadlines):
-                    print(
-                        'error, method:Filecoin.StateMinerProvingDeadline, address:%s, key: Index not exist\nresult : %s' % (
-                            addresses[idx], v))
-                return
+    def do_check_WalletBalance(self, tipset, actors):
+        actors = actors.copy()
+        actors.extend(['f01000', 'f1ojyfm5btrqq63zquewexr4hecynvq6yjyk5xv6q',
+                       'f3qfrxne7cg4ml45ufsaxqtul2c33kmlt4glq3b4zvha3msw4imkyi45iyhcpnqxt2iuaikjmmgx2xlr5myuxa'], )
+        for actor in actors:
+            balance, _ = self.do_check_result(tipset,
+                                              'Filecoin.WalletBalance', [actor])
 
-            partitions, _ = self.do_check_result(tipset,
-                                                 "Filecoin.StateMinerPartitions",
-                                                 [miner, deadlines['Index'],
-                                                  parent_key])
-            if partitions is None:
-                continue
+    def load_message_template(self):
+        if hasattr(self, 'message'):
+            return self.message.copy()
 
-            for pt in partitions:
-                params = [miner, pt['ActiveSectors'], parent_key]
-                sectors, matches = self.do_check_result(tipset,
-                                                        'Filecoin.StateMinerSectors',
-                                                        params)
-                # if not matches: continue
-                # for sector in sectors:
-                #     params = [miner, sector['SectorNumber'], parent_key]
-                #     sector_pre_commit_info, matches = self.do_check_result(tipset,
-                #                                                            'Filecoin.StateSectorPreCommitInfo',
-                #                                                            params)
-                #     if not matches: continue
-                #     self.do_check_result(tipset,
-                #                          "Filecoin.StateMinerInitialPledgeCollateral",
-                #                          [miner, sector_pre_commit_info['Info'],
-                #                           parent_key])
+        with open("./message.json", 'r') as f:
+            self.message = json.load(f)
+            self.message["GasLimit"] = 0
+            self.message["GasFeeCap"] = "0"
+            self.message["GasPremium"] = "0"
+            f.close()
+            return self.message
 
+    def do_check_EstimateGas(self, tipset):
+        msg = self.load_message_template()
+        actor, matches = self.do_check_result(tipset, 'Filecoin.StateGetActor',
+                                              [msg['From'], tipset['cids']])
+        if not matches:
+            print("|- check StateGetActor mis-match, 'estimategase' won't continue")
+            return
 
-def do_check_WalletBalance(self, tipset, actors):
-    actors = actors.copy()
-    actors.extend(['f01000', 'f1ojyfm5btrqq63zquewexr4hecynvq6yjyk5xv6q',
-                   'f3qfrxne7cg4ml45ufsaxqtul2c33kmlt4glq3b4zvha3msw4imkyi45iyhcpnqxt2iuaikjmmgx2xlr5myuxa'], )
-    for actor in actors:
-        balance, _ = self.do_check_result(tipset,
-                                          'Filecoin.WalletBalance', [actor])
-
-
-def load_message_template(self):
-    if hasattr(self, 'message'):
-        return self.message.copy()
-
-    with open("./message.json", 'r') as f:
-        self.message = json.load(f)
-        self.message["GasLimit"] = 0
-        self.message["GasFeeCap"] = "0"
-        self.message["GasPremium"] = "0"
-        f.close()
-        return self.message
-
-
-def do_check_EstimateGas(self, tipset):
-    msg = self.load_message_template()
-    actor, matches = self.do_check_result(tipset, 'Filecoin.StateGetActor',
-                                          [msg['From'], tipset['cids']])
-    if not matches:
-        print("|- check StateGetActor mis-match, 'estimategase' won't continue")
+        msg['Nonce'] = actor['Nonce']
+        msg, matches = self.do_check_result(tipset, 'Filecoin.GasEstimateMessageGas',
+                                            [msg,
+                                             {'MaxFee': '0', 'GasOverEstimation': 0},
+                                             tipset['cids']], skip=['CID'])
+        print("|- EstimateMessageGas returns:%s\n" % (msg))
         return
 
-    msg['Nonce'] = actor['Nonce']
-    msg, matches = self.do_check_result(tipset, 'Filecoin.GasEstimateMessageGas',
-                                        [msg,
-                                         {'MaxFee': '0', 'GasOverEstimation': 0},
-                                         tipset['cids']], skip=['CID'])
-    print("|- EstimateMessageGas returns:%s\n" % (msg))
-    return
+    def do_check_getbaseinfo(self, tipset, miners=[]):
+        miners.extend(['f02438', 'f0131822'])
+        block = tipset['blocks'][0]
+        for miner in miners:
+            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
+                                 [miner, block['Height'], block['Parents']])
+        return
 
+    def do_check_StateCirculatingSupply(self, tipset):
+        params = [tipset['cids']]
+        self.do_check_result(tipset, 'Filecoin.StateCirculatingSupply', params)
+        self.do_check_result(tipset, 'Filecoin.StateVMCirculatingSupplyInternal', params)
 
-def do_check_getbaseinfo(self, tipset, miners=[]):
-    miners.extend(['f02438', 'f0131822'])
-    block = tipset['blocks'][0]
-    for miner in miners:
-        self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
-                             [miner, block['Height'], block['Parents']])
-    return
+    def do_check_ChainGetParentReceipts(self, tipset):
+        params = [tipset['cids'][0]]
+        self.do_check_result(tipset, 'Filecoin.ChainGetParentReceipts', params)
 
-
-def do_check_StateCirculatingSupply(self, tipset):
-    params = [tipset['cids']]
-    self.do_check_result(tipset, 'Filecoin.StateCirculatingSupply', params)
-    self.do_check_result(tipset, 'Filecoin.StateVMCirculatingSupplyInternal', params)
-
-
-def do_check_ChainGetParentReceipts(self, tipset):
-    params = [tipset['cids'][0]]
-    self.do_check_result(tipset, 'Filecoin.ChainGetParentReceipts', params)
-
-
-def do_check_StateReadState_venus_not_exist_this_api(self, tipset, actors):
-    params = ['', tipset['cids']]
-    for actor in actors:
-        params[0] = actor
-        self.do_check_result(tipset, 'Filecoin.StateReadState', params)
+    def do_check_StateReadState_venus_not_exist_this_api(self, tipset, actors):
+        params = ['', tipset['cids']]
+        for actor in actors:
+            params[0] = actor
+            self.do_check_result(tipset, 'Filecoin.StateReadState', params)
 
 # MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
 # SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
