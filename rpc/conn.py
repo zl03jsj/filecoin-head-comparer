@@ -205,16 +205,16 @@ class _conns_manager:
         for _, miner in enumerate(miners):
             params[0] = miner
             self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
-            self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
-            self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
             self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
                                  [miner, block['Height'], block['Parents']])
+            self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
+            self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
+            # self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
+            # self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
             # don't check slow api
             # self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
 
