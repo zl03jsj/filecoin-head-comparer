@@ -49,7 +49,8 @@ def loop_check_apis():
             if not matched:
                 sleep(dur)
                 continue
-            elif matched and tipset is not None and tipset['cids'] == heads[0]['cids']:
+            elif False and matched and tipset is not None and tipset['cids'] == heads[0][
+                'cids']:
                 print("|-- chain head doesn't change, don't need to compare again")
                 sleep(dur)
                 continue
