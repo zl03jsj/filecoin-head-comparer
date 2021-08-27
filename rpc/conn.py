@@ -140,7 +140,7 @@ class _conns_manager:
             for idx, v in enumerate(res):
                 if same_height and res[idx]['height'] != res[0]['height']:
                     same_height = False
-                print("|- %+14s: height:%d, block:%d" % (
+                print("|- %+16s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
 
         print()
@@ -158,13 +158,14 @@ class _conns_manager:
             d = to_josn(res[idx]['result'], skip)
             if d_0 != d: matchs = False
 
-        print('|--  method:%s, height:%d, API->%s\n|----  params:%s' % (
+        print('|--  method:%s, height:%d, API->%s\n' % (
             displayName if displayName is not None else method,
-            tipset['height'], '100-%match' if matchs else 'mis-match', params))
+            tipset['height'], '100-%match' if matchs else 'mis-match'))
 
         if not matchs:
+            print('|---- params:%s' % (params))
             for idx, r in enumerate(res):
-                print('%-15s->%s' % (r['name'], r['result']))
+                print('|---- %-16s->%s' % (r['name'], r['result']))
             print('\n')
 
         return res[0] if matchs else res, matchs
