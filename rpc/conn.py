@@ -158,13 +158,14 @@ class _conns_manager:
             d = to_josn(res[idx]['result'], skip)
             if d_0 != d: matchs = False
 
-        print('|--  method:%s, height:%d, API->%s\n|----  params:%s' % (
+        print('|--  method:%s, height:%d, API->%s\n' % (
             displayName if displayName is not None else method,
-            tipset['height'], '100-%match' if matchs else 'mis-match', params))
+            tipset['height'], '100-%match' if matchs else 'mis-match'))
 
         if not matchs:
+            print('|---- params:%s' % (params))
             for idx, r in enumerate(res):
-                print('%-15s->%s' % (r['name'], r['result']))
+                print('|---- %-15s->%s' % (r['name'], r['result']))
             print('\n')
 
         return res[0] if matchs else res, matchs
