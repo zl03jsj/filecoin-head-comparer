@@ -140,7 +140,7 @@ class _conns_manager:
             for idx, v in enumerate(res):
                 if same_height and res[idx]['height'] != res[0]['height']:
                     same_height = False
-                print("|- %+15s: height:%d, block:%d" % (
+                print("|- %+16s: height:%d, block:%d" % (
                     v['name'], v['height'], len(v['cids'])))
 
         print()
@@ -165,7 +165,7 @@ class _conns_manager:
         if not matchs:
             print('|---- params:%s' % (params))
             for idx, r in enumerate(res):
-                print('|---- %-15s->%s' % (r['name'], r['result']))
+                print('|---- %-16s->%s' % (r['name'], r['result']))
             print('\n')
 
         return res[0] if matchs else res, matchs
