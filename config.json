@@ -11,8 +11,14 @@
   },
   {
     "enable": "true",
-    "name": "venus-optimize",
+    "name": "venus-optimize_0",
     "url": "http://192.168.1.125:1238/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.gOHz3MELqXKA5PfO8O3J3ZBNHZNNCB_hR--rB2ZfiQs"
+  },
+  {
+    "enable": "true",
+    "name": "venus-optimize_1",
+    "url": "http://192.168.200.19:1234/rpc/v0",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.97Y4cNW_cFyFc3rioLLtUlg6dUlN7E_WBrIewAvgTe4"
   }
 ]
