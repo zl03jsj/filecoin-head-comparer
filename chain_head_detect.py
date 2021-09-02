@@ -36,11 +36,11 @@ def loop_check_heads():
             conn_manager.do_check_heads()
         except Exception as e:
             logging.exception(e)
-        sleep(4)
+        sleep(5)
 
 
 def loop_check_apis():
-    dur = 3
+    dur = 5
     tipset = {'cids': ''}
     while True:
         try:
