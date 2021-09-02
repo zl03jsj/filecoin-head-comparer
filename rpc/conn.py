@@ -126,8 +126,7 @@ class _conns_manager:
         d_0 = json.dumps((res[0]['height'], res[0]['cids']))
 
         for idx in range(1, len(res)):
-            if 'height' not in res[idx].keys():
-                continue
+            if res[idx] is None: continue
             d = json.dumps((res[idx]['height'], res[idx]['cids']))
             if d_0 != d:
                 matchs = False
@@ -140,6 +139,7 @@ class _conns_manager:
         same_height = True
         if False == matchs:
             for idx, v in enumerate(res):
+                if v is None: continue
                 if same_height and res[idx]['height'] != res[0]['height']:
                     same_height = False
                 print("|- %+16s: height:%d, block:%d" % (
