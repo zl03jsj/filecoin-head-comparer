@@ -10,7 +10,7 @@
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
   },
   {
-    "enable": "true",
+    "enable": "no",
     "name": "venus-optimize_0",
     "url": "http://192.168.1.125:1238/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.gOHz3MELqXKA5PfO8O3J3ZBNHZNNCB_hR--rB2ZfiQs"
