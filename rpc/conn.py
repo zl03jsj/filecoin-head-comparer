@@ -16,8 +16,7 @@ class _thread(Thread):
         try:
             self.result = self.func(*self.args)
         except Exception as e:
-            print("method:%s, params:%s\n", self.args[0], self.args[1])
-            logging.exception(e)
+            print("method:%s, params:%s, err:%s\n" % (self.args[0], self.args[1], e))
 
     def get_result(self):
         try:
@@ -116,7 +115,9 @@ class _conns_manager:
             threads.append(t)
             t.start()
         for index, t in enumerate(threads):
-            ress.append(t.get_result())
+            res = t.get_result()
+            if res is not None:
+                ress.append(res)
         return ress
 
     def do_check_heads(self):
