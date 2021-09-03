@@ -1,9 +1,7 @@
 import json
 import requests
 from threading import Thread
-import logging
-from functools import reduce
-import operator as op
+import time
 
 
 class _thread(Thread):
@@ -123,6 +121,8 @@ class _conns_manager:
     def do_check_heads(self):
         res = self.post("Filecoin.ChainHead")
 
+        time_stamp = int(time.time())
+
         matchs = True
         d_0 = json.dumps((res[0]['height'], res[0]['cids']))
 
@@ -139,12 +139,15 @@ class _conns_manager:
 
         same_height = True
         if False == matchs:
+            away = time_stamp % 30
+            if away > 12:
+                print("|- this mis-matching will cause [INSULAR] block")
             for idx, v in enumerate(res):
                 if v is None: continue
                 if same_height and res[idx]['height'] != res[0]['height']:
                     same_height = False
-                print("|- %+16s: height:%d, block:%d" % (
-                    v['name'], v['height'], len(v['cids'])))
+                print("|- %+16s: height:%d, block:%d, away from time window:%d" % (
+                    v['name'], v['height'], len(v['cids']), away))
 
         print()
         return res, same_height, matchs
