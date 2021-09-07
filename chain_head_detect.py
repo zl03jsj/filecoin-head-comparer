@@ -36,7 +36,7 @@ def loop_check_heads():
             conn_manager.do_check_heads()
         except Exception as e:
             logging.exception(e)
-        sleep(5)
+        sleep(3)
 
 
 def loop_check_apis():
