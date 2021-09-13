@@ -303,16 +303,19 @@ class _conns_manager:
                                               'Filecoin.WalletBalance', [actor])
 
     def load_message_template(self):
+        msgtype = "don't know"
         if hasattr(self, 'message'):
-            return self.message.copy()
+            return self.message[msgtype].copy()
 
         with open("./message.json", 'r') as f:
             self.message = json.load(f)
-            self.message["GasLimit"] = 0
-            self.message["GasFeeCap"] = "0"
-            self.message["GasPremium"] = "0"
+            m = self.message[msgtype]
+            m["GasLimit"] = 0
+            m["GasFeeCap"] = "0"
+            m["GasPremium"] = "0"
+
             f.close()
-            return self.message
+            return m
 
     def do_check_EstimateGas(self, tipset):
         msg = self.load_message_template()
