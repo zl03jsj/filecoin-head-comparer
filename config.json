@@ -1,22 +1,36 @@
 [
   {
+    "enable": "no",
     "name": "lotus",
     "url": "http://192.168.1.148:1234/rpc/v0",
     "token": null
   },
   {
+    "enable": "yes",
+    "name": "lotus",
+    "url": "http://139.196.147.220:1234/rpc/v0",
+    "token": null
+  },
+  {
+    "enable": "no",
+    "name": "lotus",
+    "url": "http://47.115.22.33:1234/rpc/v0",
+    "token": null
+  },
+  {
+    "enable": "no",
     "name": "venus-release",
     "url": "http://120.78.159.125:88/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
   },
   {
-    "enable": "no",
+    "enable": "yes",
     "name": "venus-optimize_0",
     "url": "http://192.168.1.125:1238/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.gOHz3MELqXKA5PfO8O3J3ZBNHZNNCB_hR--rB2ZfiQs"
   },
   {
-    "enable": "true",
+    "enable": "yes",
     "name": "venus-optimize_1",
     "url": "http://192.168.200.19:1234/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.qjsoEpvpjvbwJ_unvUGJFnKx48ynjt0lbPko06h_F1E"
