@@ -42,6 +42,7 @@ def loop_check_heads():
 def loop_check_apis():
     dur = 5
     tipset = {'cids': ''}
+    is_api_matched = False
     while True:
         try:
             print("\n")
@@ -49,16 +50,21 @@ def loop_check_apis():
             if not matched:
                 sleep(dur)
                 continue
-            elif False and matched and tipset is not None and tipset['cids'] == heads[0][
-                'cids']:
-                print("|-- chain head doesn't change, don't need to compare again")
-                sleep(dur)
-                continue
+            elif tipset is not None and tipset['cids'] == heads[0]['cids']:
+                if matched:
+                    print("|-- chain head doesn't change, don't need to compare again")
+                    sleep(dur)
+                    continue
+                elif is_api_matched:
+                    print(
+                        "|-- api check result is already be true, don't need to compare again")
+                    sleep(dur)
+                    continue
 
             tipset = heads[0]
             # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
-            # conn_manager.do_check_StateMinerStuff(tipset, miners)
+            is_api_matched = conn_manager.do_check_StateMinerStuff(tipset, miners)
             # conn_manager.do_check_getbaseinfo(tipset, miners)
             # conn_manager.do_check_StateGetActor(tipset, miners)
             # conn_manager.do_check_EstimateGas(tipset)
@@ -71,7 +77,7 @@ def loop_check_apis():
 
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000, 900000000010)
             # conn_manager.do_check_WalletBalance(tipset, actors)
-            conn_manager.do_check_EstimateGas(tipset)
+            # conn_manager.do_check_EstimateGas(tipset)
             # conn_manager.do_check_StateCirculatingSupply(tipset)
         except Exception as e:
             logging.exception(e)

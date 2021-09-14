@@ -209,19 +209,32 @@ class _conns_manager:
         # self.do_check_result(tipset, "Filecoin.StateMarketDeals", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateCirculatingSupply", [tsk])
         # self.do_check_result(tipset, "Filecoin.StateListActors", [tsk])
+        matched = True
         for _, miner in enumerate(miners):
             params[0] = miner
-            self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
-            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
-                                 [miner, block['Height'], block['Parents']])
-            self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
-            self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
-            # self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
-            # self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
-            # self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
-            # self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
-            # self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
-            # self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
+            _, m = self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
+                                        [miner, block['Height'], block['Parents']])
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance",
+                                        params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline",
+                                        params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerSectorCount", params)
+            matched = m if matched else m
+            _, m = self.do_check_result(tipset, "Filecoin.StateMarketBalance", params)
+            matched = m if matched else m
             # don't check slow api
             # self.do_check_result(tipset, "Filecoin.StateMinerActiveSectors", params)
 
@@ -231,6 +244,7 @@ class _conns_manager:
         # state = con.post('Filecoin.StateReadState', params)
         # if 'State' not in state.keys(): continue
         # pms_id = state['State']['PreCommittedSectors']
+        return matched
 
     def do_check_StateGetActor(self, tipset, addresses):
         for _, actor in enumerate(addresses):
