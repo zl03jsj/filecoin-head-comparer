@@ -41,10 +41,8 @@ class _conn:
         # [x['/'] for x in ((res['Cids'] if 'Cids' in res else res['Key']))]
         cids = res['Key'] if 'Key' in res else (res['Cids'] if 'Cids' in res else None)
         blks = res['Blocks'][0]
-        return {'cids': cids,
-                'blocks': res['Blocks'],
-                'height': blks["Height"] if "Height" in blks else blks['height'],
-                'name': self.name}
+        return {'cids': cids, 'blocks': res['Blocks'],
+                'height': blks["Height"] if "Height" in blks else blks['height'], 'name': self.name}
 
     def post(self, method, params):
         if not isinstance(method, str):
@@ -56,12 +54,10 @@ class _conn:
 
         self.payload["params"] = params
 
-        res = requests.request("POST", self.url, headers=self.header,
-                               data=json.dumps(self.payload))
+        res = requests.request("POST", self.url, headers=self.header, data=json.dumps(self.payload))
         if res.status_code != 200:
             res_obj = json.loads(res.text)
-            print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (
-                self.name, res.status_code, res_obj['error']))
+            print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (self.name, res.status_code, res_obj['error']))
 
             return
         if method == 'Filecoin.ChainHead':
@@ -72,8 +68,7 @@ class _conn:
             if 'result' in json_obj:
                 return {'name': self.name, 'result': json_obj['result']}
             else:
-                print("|- method:%s returns error\n|- params:%s\n|- message:%s" % (
-                    method, params, json_obj['error']['message']))
+                print("|- method:%s returns error\n|- params:%s\n|- message:%s" % (method, params, json_obj['error']['message']))
                 return {'name': self.name, 'result': json_obj['error']}
 
 
@@ -192,11 +187,8 @@ class _conns_manager:
 
     def do_check_ChainGetBlockMessages(self, tipset):
         for _, blk in enumerate(tipset['blocks']):
-            self.do_check_result(tipset, "Filecoin.ChainReadObj", [blk['Messages']],
-                                 displayName='BlockMessages')
-            self.do_check_result(tipset, 'Filecoin.ChainReadObj',
-                                 [blk['ParentMessageReceipts']],
-                                 displayName='ParentMessageReceipts')
+            self.do_check_result(tipset, "Filecoin.ChainReadObj", [blk['Messages']], displayName='BlockMessages')
+            self.do_check_result(tipset, 'Filecoin.ChainReadObj', [blk['ParentMessageReceipts']], displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
         miners = addresses[:4]
@@ -214,20 +206,17 @@ class _conns_manager:
             params[0] = miner
             _, m = self.do_check_result(tipset, 'Filecoin.StateMinerPower', params)
             matched = m if matched else m
-            _, m = self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
-                                        [miner, block['Height'], block['Parents']])
+            _, m = self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo', [miner, block['Height'], block['Parents']])
             matched = m if matched else m
             _, m = self.do_check_result(tipset, "Filecoin.StateMinerInfo", params)
             matched = m if matched else m
-            _, m = self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance",
-                                        params)
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerAvailableBalance", params)
             matched = m if matched else m
             _, m = self.do_check_result(tipset, "Filecoin.StateMinerRecoveries", params)
             matched = m if matched else m
             _, m = self.do_check_result(tipset, "Filecoin.StateMinerFaults", params)
             matched = m if matched else m
-            _, m = self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline",
-                                        params)
+            _, m = self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", params)
             matched = m if matched else m
             _, m = self.do_check_result(tipset, "Filecoin.StateMinerDeadlines", params)
             matched = m if matched else m
@@ -248,23 +237,16 @@ class _conns_manager:
 
     def do_check_StateGetActor(self, tipset, addresses):
         for _, actor in enumerate(addresses):
-            self.do_check_result(tipset, "Filecoin.StateGetActor",
-                                 [actor, tipset['cids']])
+            self.do_check_result(tipset, "Filecoin.StateGetActor", [actor, tipset['cids']])
 
     def do_check_StateMinerSectorAllocated(self, tipset, addresses, start, end):
         check_count = 10
         for _, miner in enumerate(addresses):
-            for i in range(start, end,
-                           int((
-                                       end - start) / check_count)) if end - start > check_count else 1:
+            for i in range(start, end, int((end - start) / check_count)) if end - start > check_count else 1:
                 parent_key = tipset['blocks'][0]['Parents']
-                res, matches = self.do_check_result(tipset,
-                                                    "Filecoin.StateMinerSectorAllocated",
-                                                    [miner, i, parent_key])
+                res, matches = self.do_check_result(tipset, "Filecoin.StateMinerSectorAllocated", [miner, i, parent_key])
                 if matches:
-                    res, matches = self.do_check_result(tipset,
-                                                        'Filecoin.StateSectorGetInfo',
-                                                        [miner, i, parent_key])
+                    res, matches = self.do_check_result(tipset, 'Filecoin.StateSectorGetInfo', [miner, i, parent_key])
                     if res['result'] is not None and matches:
                         print('|--    StateSectorGetInfo:%s' % (res['result']))
 
@@ -272,30 +254,21 @@ class _conns_manager:
         miners = addresses[:2]
         parent_key = tipset['blocks'][0]['Parents']
         for _, miner in enumerate(miners):
-            deadlines, matches = self.do_check_result(tipset,
-                                                      "Filecoin.StateMinerProvingDeadline",
-                                                      [miner, parent_key])
+            deadlines, matches = self.do_check_result(tipset, "Filecoin.StateMinerProvingDeadline", [miner, parent_key])
             if matches == True:
                 deadlines = deadlines['result']
                 if not 'Index' in deadlines.keys():
                     for idx, v in enumerate(deadlines):
-                        print(
-                            'error, method:Filecoin.StateMinerProvingDeadline, address:%s, key: Index not exist\nresult : %s' % (
-                                addresses[idx], v))
+                        print('error, method:Filecoin.StateMinerProvingDeadline, address:%s, key: Index not exist\nresult : %s' % (
+                            addresses[idx], v))
                     return
-
-                partitions, _ = self.do_check_result(tipset,
-                                                     "Filecoin.StateMinerPartitions",
-                                                     [miner, deadlines['Index'],
-                                                      parent_key])
+                partitions, _ = self.do_check_result(tipset, "Filecoin.StateMinerPartitions", [miner, deadlines['Index'], parent_key])
                 if partitions is None:
                     continue
 
                 for pt in partitions['result']:
                     params = [miner, pt['ActiveSectors'], parent_key]
-                    self.do_check_result(tipset,
-                                         'Filecoin.StateMinerSectors',
-                                         params)
+                    self.do_check_result(tipset, 'Filecoin.StateMinerSectors', params)
                     # if not matches: continue
                     # for sector in sectors:
                     #     params = [miner, sector['SectorNumber'], parent_key]
@@ -313,8 +286,7 @@ class _conns_manager:
         actors.extend(['f01000', 'f1ojyfm5btrqq63zquewexr4hecynvq6yjyk5xv6q',
                        'f3qfrxne7cg4ml45ufsaxqtul2c33kmlt4glq3b4zvha3msw4imkyi45iyhcpnqxt2iuaikjmmgx2xlr5myuxa'], )
         for actor in actors:
-            balance, _ = self.do_check_result(tipset,
-                                              'Filecoin.WalletBalance', [actor])
+            balance, _ = self.do_check_result(tipset, 'Filecoin.WalletBalance', [actor])
 
     def load_message_template(self):
         msgtype = "don't know"
@@ -333,17 +305,14 @@ class _conns_manager:
 
     def do_check_EstimateGas(self, tipset):
         msg = self.load_message_template()
-        actor, matches = self.do_check_result(tipset, 'Filecoin.StateGetActor',
-                                              [msg['From'], tipset['cids']])
+        actor, matches = self.do_check_result(tipset, 'Filecoin.StateGetActor', [msg['From'], tipset['cids']])
         if not matches:
             print("|- check StateGetActor mis-match, 'estimategase' won't continue")
             return
 
         msg['Nonce'] = actor['result']['Nonce']
         msg, matches = self.do_check_result(tipset, 'Filecoin.GasEstimateMessageGas',
-                                            [msg,
-                                             {'MaxFee': '0', 'GasOverEstimation': 0},
-                                             tipset['cids']], skip=['CID'])
+                                            [msg, {'MaxFee': '0', 'GasOverEstimation': 0}, tipset['cids']], skip=['CID'])
         print("|- EstimateMessageGas returns:%s\n" % (msg))
         return
 
@@ -351,8 +320,7 @@ class _conns_manager:
         miners.extend(['f02438', 'f0131822'])
         block = tipset['blocks'][0]
         for miner in miners:
-            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo',
-                                 [miner, block['Height'], block['Parents']])
+            self.do_check_result(tipset, 'Filecoin.MinerGetBaseInfo', [miner, block['Height'], block['Parents']])
         return
 
     def do_check_StateCirculatingSupply(self, tipset):
