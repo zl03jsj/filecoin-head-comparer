@@ -1,0 +1,36 @@
+===================================================================
+                  Generic Colouriser
+
+Radovan Garabík <garabik @ kassiopeia.juls.savba.sk>
+http://kassiopeia.juls.savba.sk/~garabik/software/grc.html
+
+===================================================================
+Requirements:
+Anything with a python interpreter, with more or less work needed
+if it is not unix.
+
+If you have a debian system with all necessary packages installed, type
+	dpkg-buildpackage (or dpkg-buildpackage -rfakeroot) in the package's
+	directory, then type
+	dpkg -i ../grc*deb
+
+else:
+
+	1) copy colourfiles/conf.* files into /usr/share/grc/ or /usr/local/share/grc/,
+	   creating directories when needed
+
+	2) copy grc.conf into /etc/
+
+	3) copy grc and grcat somewhere to your path
+
+	4) read the README and manual pages
+
+	5) modify /etc/grc.conf if you feel like it
+
+
+	There is a small shell script called install.sh provided, which
+	automatically does the above steps.
+
+If you're on OS X and using Homebrew,
+	brew install grc
+

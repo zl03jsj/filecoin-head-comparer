@@ -1,0 +1,14 @@
+Source: grc
+Section: text
+Priority: optional
+Maintainer: Radovan Garabík <garabik@kassiopeia.juls.savba.sk>
+Standards-Version: 4.5.1
+Build-Depends: debhelper (>=9), python3, dh-python
+
+Package: grc
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: generic colouriser for everything
+ generic colouriser, can be used to colourise logfiles,
+ output of commands, arbitrary text....
+ configured via regexp's.
