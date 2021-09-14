@@ -18,21 +18,21 @@
     "token": null
   },
   {
-    "enable": "no",
+    "enable": "yes",
     "name": "venus-release",
     "url": "http://120.78.159.125:88/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
   },
   {
     "enable": "yes",
-    "name": "venus-optimize_0",
+    "name": "optimized_125",
     "url": "http://192.168.1.125:1238/rpc/v0",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.gOHz3MELqXKA5PfO8O3J3ZBNHZNNCB_hR--rB2ZfiQs"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.Id3sXcELKu0uu-jTHrLHq-Ipeg2y6f2OBEHyoHDKpWQ"
   },
   {
     "enable": "yes",
-    "name": "venus-optimize_1",
+    "name": "optimized_19",
     "url": "http://192.168.200.19:1234/rpc/v0",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.qjsoEpvpjvbwJ_unvUGJFnKx48ynjt0lbPko06h_F1E"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.9vYzKCTC9OXH_fg-71sbawSQ6CXXIRfCF0KdpmoC8qE"
   }
 ]
