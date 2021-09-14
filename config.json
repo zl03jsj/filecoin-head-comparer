@@ -30,7 +30,7 @@
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.Id3sXcELKu0uu-jTHrLHq-Ipeg2y6f2OBEHyoHDKpWQ"
   },
   {
-    "enable": "no",
+    "enable": "yes",
     "name": "optimized_19",
     "url": "http://192.168.200.19:3453/rpc/v0",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.9vYzKCTC9OXH_fg-71sbawSQ6CXXIRfCF0KdpmoC8qE"
