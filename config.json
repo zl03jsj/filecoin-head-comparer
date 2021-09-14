@@ -1,38 +1,41 @@
-[
-  {
-    "enable": "no",
-    "name": "lotus",
-    "url": "http://192.168.1.148:1234/rpc/v0",
-    "token": null
-  },
-  {
-    "enable": "yes",
-    "name": "lotus",
-    "url": "http://139.196.147.220:1234/rpc/v0",
-    "token": null
-  },
-  {
-    "enable": "no",
-    "name": "lotus",
-    "url": "http://47.115.22.33:1234/rpc/v0",
-    "token": null
-  },
-  {
-    "enable": "yes",
-    "name": "venus-release",
-    "url": "http://120.78.159.125:88/rpc/v0",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
-  },
-  {
-    "enable": "yes",
-    "name": "optimized_125",
-    "url": "http://192.168.1.125:1238/rpc/v0",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.Id3sXcELKu0uu-jTHrLHq-Ipeg2y6f2OBEHyoHDKpWQ"
-  },
-  {
-    "enable": "yes",
-    "name": "optimized_19",
-    "url": "http://192.168.200.19:3453/rpc/v0",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.9vYzKCTC9OXH_fg-71sbawSQ6CXXIRfCF0KdpmoC8qE"
-  }
-]
+{
+  "always_display_params": false,
+  "urls": [
+    {
+      "enable": "no",
+      "name": "lotus",
+      "url": "http://192.168.1.148:1234/rpc/v0",
+      "token": null
+    },
+    {
+      "enable": "no",
+      "name": "lotus",
+      "url": "http://139.196.147.220:1234/rpc/v0",
+      "token": null
+    },
+    {
+      "enable": "yes",
+      "name": "lotus",
+      "url": "http://47.115.22.33:1234/rpc/v0",
+      "token": null
+    },
+    {
+      "enable": "yes",
+      "name": "venus-release",
+      "url": "http://120.78.159.125:88/rpc/v0",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
+    },
+    {
+      "enable": "yes",
+      "name": "optimized_125",
+      "url": "http://192.168.1.125:3453/rpc/v0",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.3C5JBle4XMEnGHOSlUISJLf5IcMEFg7BRaX82zz6Nv0"
+    },
+    {
+      "enable": "yes",
+      "name": "optimized_19",
+      "url": "http://192.168.200.19:3453/rpc/v0",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.9vYzKCTC9OXH_fg-71sbawSQ6CXXIRfCF0KdpmoC8qE"
+    }
+  ]
+}
