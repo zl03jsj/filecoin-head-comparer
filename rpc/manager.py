@@ -135,7 +135,7 @@ class _conns_manager:
             self.do_check_result(tipset, 'ChainReadObj', [blk['ParentMessageReceipts']], displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
-        miners = addresses[:4]
+        miners = addresses[:2]
         tsk = tipset['cids']
         block = tipset['blocks'][0]
         params = ['', tsk]
