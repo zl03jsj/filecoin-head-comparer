@@ -1,6 +1,5 @@
 #! /usr/bin python3
 import json
-from rpc.conn import _conn, _precommit_sector_provider
 from rpc.manager import _conns_manager
 from time import sleep
 import logging
