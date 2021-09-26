@@ -272,17 +272,19 @@ class _conns_manager:
             sct.append(tipset['cids'])
             res, matches = self.do_check_result(tipset, 'StateSectorPreCommitInfo', sct, checker=checker)
             if matches:
-                self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', [sct[0], res['result']['Info'], tipset['cids']])
+                params = [sct[0], res['result']['Info'], tipset['cids']]
+                self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', params)
+                self.do_check_result(tipset, "StateMinerPreCommitDepositForPower", params)
 
     # MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
     # SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
     # ChainGetParentReceipts(ctx context.Context, blockCid cid.Cid) ([] * types.MessageReceipt, error)
     # StateMinerPower(context.Context, address.Address, types.TipSetKey)(*MinerPower, error)
     # StateMinerInitialPledgeCollateral(context.Context, address.Address, miner.SectorPreCommitInfo, types.TipSetKey)( types.BigInt, error)
+    # StateMinerPreCommitDepositForPower(ctx context.Context, maddr address.Address, pci miner.SectorPreCommitInfo, tsk types.TipSetKey) (big.Int, error)
     # StateMinerAvailableBalance(context.Context, address.Address, types.TipSetKey)( types.BigInt, error)
     # StateSectorPreCommitInfo(context.Context, address.Address, abi.SectorNumber, types.TipSetKey)(miner.SectorPreCommitOnChainInfo, error)
     # StateWaitMsg(ctx context.Context, cid cid.Cid, confidence uint64, limit abi.ChainEpoch, allowReplaced bool) (*MsgLookup, error)
     # StateMarketBalance(context.Context, address.Address, types.TipSetKey)(MarketBalance, error)
-
     # StateMinerPower
     # StateMinerAvailableBalance
