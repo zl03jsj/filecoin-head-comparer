@@ -62,8 +62,9 @@ def to_josn(d, exclude=[]):
 
 
 class _precommit_sector_provider:
-    def __init__(self):
-        self.conn = _conn("precommitsectors_provider", "https://api.filscan.io:8700/rpc/v1", "")
+    def __init__(self, url):
+        self.url = url
+        self.conn = _conn("precommitsectors_provider", self.url, "")
 
     def precommitsectors(self):
         res = self.conn.post("filscan.GetMessages", [{"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}])
@@ -74,8 +75,7 @@ class _precommit_sector_provider:
         return [[s['to'], s['args']['SectorNumber']] for s in res]
 
     def precommitsectorsV2(self):
-        res = requests.get(url='https://filfox.info/api/v1/message/list',
-                           params={'pageSize': 5, 'page': 0, 'method': 'PreCommitSector'},
-                           headers={':authority':'filfox.info',
-                                    'user-agent':' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36'} )
-        print(res)
+        res = requests.get('https://filfox.info/api/v1/message/list?pageSize=5&page=0&method=PreCommitSector')
+        if res.status_code != 200:
+            return None
+        res = json.loads(res.text)

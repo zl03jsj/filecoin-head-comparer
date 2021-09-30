@@ -27,13 +27,13 @@ class _thread(Thread):
 
 class _conns_manager:
     conns = []
-    sector_provider = _precommit_sector_provider()
 
     def __init__(self, cfg):
         for c in cfg['urls']:
             if 'enable' in c.keys() and c['enable'] == 'no': continue
             self.insert(_conn(c['name'], c['url'], c['token']))
         self.always_display_params = cfg['always_display_params']
+        self.sector_provider = _precommit_sector_provider(cfg['precommit_url'])
 
     def insert(self, c):
         if not isinstance(c, _conn):

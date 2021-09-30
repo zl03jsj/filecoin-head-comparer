@@ -1,5 +1,8 @@
 {
   "always_display_params": false,
+  "precommit_url": "https://calibration.filscan.io:8700/rpc/v1",
+  "precommit_url_calib": "https://calibration.filscan.io:8700/rpc/v1",
+  "precommit_url_main": "https://api.filscan.io:8700/rpc/v1",
   "urls": [
     {
       "enable": "no",
@@ -35,7 +38,7 @@
       "enable": "no",
       "name": "optimized_19",
       "url": "http://192.168.200.19:3453/rpc/v0",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.oJLQhicGafK-9boyFJSiyJREZt4uciNYzic5CrQdlD8"
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.mGOZwXsvSBy9pXeFkk7wwpwOJ4wMriW7d3yULHzBHLU"
     }
   ]
 }
