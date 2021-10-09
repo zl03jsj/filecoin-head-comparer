@@ -3,6 +3,7 @@
   "precommit_url": "https://calibration.filscan.io:8700/rpc/v1",
   "precommit_url_calib": "https://calibration.filscan.io:8700/rpc/v1",
   "precommit_url_main": "https://api.filscan.io:8700/rpc/v1",
+  "miners": [],
   "urls": [
     {
       "enable": "yes",
