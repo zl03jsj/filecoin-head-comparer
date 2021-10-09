@@ -141,7 +141,19 @@ class _conns_manager:
         params = ['', tsk]
 
         self.do_check_result(tipset, "StateVMCirculatingSupplyInternal", [tsk])
+
         # self.do_check_result(tipset, "StateCirculatingSupply", [tsk])
+
+        def checker(x, y):
+            keys = ['unknown actor code', 'actor not found']
+            if x is None: return 'actor not found' in y['message']
+            if 'message' in x:
+                for k in keys:
+                    if k in x['message'] and k in y['message']:
+                        print(x['message'])
+                        return True
+
+            return to_josn(x) == to_josn(y)
 
         for _, miner in enumerate(miners):
             params[0] = miner
@@ -153,7 +165,7 @@ class _conns_manager:
             _, m = self.do_check_result(tipset, "StateMinerFaults", params)
             _, m = self.do_check_result(tipset, "StateMinerProvingDeadline", params)
             _, m = self.do_check_result(tipset, "StateMinerDeadlines", params)
-            _, m = self.do_check_result(tipset, "StateMinerSectorCount", params)
+            _, m = self.do_check_result(tipset, "StateMinerSectorCount", params, checker=checker)
             _, m = self.do_check_result(tipset, "StateMarketBalance", params)
 
         self.do_check_StateSectorPreCommitInfo(tipset)
@@ -271,7 +283,7 @@ class _conns_manager:
         for sct in sectors:
             sct.append(tipset['cids'])
             res, matches = self.do_check_result(tipset, 'StateSectorPreCommitInfo', sct, checker=checker)
-            if matches:
+            if matches and 'Info' in res['result']:
                 params = [sct[0], res['result']['Info'], tipset['cids']]
                 self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', params)
                 self.do_check_result(tipset, "StateMinerPreCommitDepositForPower", params)
