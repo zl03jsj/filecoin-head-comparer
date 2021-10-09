@@ -5,15 +5,18 @@ from time import sleep
 import logging
 import sys, getopt
 
+miners = ['f02438', 'f0688165', 'f0724216', "f0128788", "f0127595", "f0123261",
+          "f0135467", "f0142720", ]
+
 with open("./config.json", 'r') as f:
     conn_cfgs = json.load(f)
+    if 'miners' in conn_cfgs:
+        miners = conn_cfgs['miners']
     f.close()
 
 conn_manager = _conns_manager(conn_cfgs)
 
 
-miners = ['f02438', 'f0688165', 'f0724216', "f0128788", "f0127595", "f0123261",
-          "f0135467", "f0142720", ]
 accounts = [
     "f3qzprefkeragndcicaqgztojarm4pzohn7swwqtmtcx42wykpgxtz6rtpn7xsderun5kigfopv3tydhddx4na",
     "f3sfyonhd3apsolzlpl5uy2a7j7jyktekp7v365l2uqo4chmmf7zmkmsry5qru562yhetnruzflmcnldwow6uq"]

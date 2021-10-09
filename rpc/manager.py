@@ -283,10 +283,12 @@ class _conns_manager:
         for sct in sectors:
             sct.append(tipset['cids'])
             res, matches = self.do_check_result(tipset, 'StateSectorPreCommitInfo', sct, checker=checker)
-            if matches and 'Info' in res['result']:
+            if matches and 'result' in res and 'Info' in res['result']:
                 params = [sct[0], res['result']['Info'], tipset['cids']]
                 self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', params)
                 self.do_check_result(tipset, "StateMinerPreCommitDepositForPower", params)
+            else:
+                print(res)
 
     # MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
     # SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
