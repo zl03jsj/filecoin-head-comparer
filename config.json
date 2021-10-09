@@ -1,44 +1,20 @@
 {
   "always_display_params": false,
-  "precommit_url": "https://api.filscan.io:8700/rpc/v1",
+  "precommit_url": "https://calibration.filscan.io:8700/rpc/v1",
   "precommit_url_calib": "https://calibration.filscan.io:8700/rpc/v1",
   "precommit_url_main": "https://api.filscan.io:8700/rpc/v1",
   "urls": [
     {
-      "enable": "no",
+      "enable": "yes",
       "name": "lotus",
-      "url": "http://192.168.1.148:1234/rpc/v0",
-      "token": null
-    },
-    {
-      "enable": "no",
-      "name": "lotus",
-      "url": "http://139.196.147.220:1234/rpc/v0",
-      "token": null
+      "url": "http://192.168.200.10:3453/rpc/v0",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.79W5Rxb6HOlUtpXVJtK8p9W0A8cW5PR9c-hAfb3RKgE"
     },
     {
       "enable": "yes",
-      "name": "lotus",
-      "url": "http://47.115.22.33:1234/rpc/v0",
-      "token": null
-    },
-    {
-      "enable": "no",
-      "name": "venus-release",
-      "url": "http://120.78.159.125:88/rpc/v0",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
-    },
-    {
-      "enable": "yes",
-      "name": "optimized_125",
-      "url": "http://192.168.1.125:3453/rpc/v0",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.3zUavx-3R93dEq4pkR8GlSR3zElcRwfnsVtRGBQJNFA"
-    },
-    {
-      "enable": "no",
-      "name": "optimized_19",
-      "url": "http://192.168.200.19:3453/rpc/v0",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.mGOZwXsvSBy9pXeFkk7wwpwOJ4wMriW7d3yULHzBHLU"
+      "name": "venus",
+      "url": "http://192.168.200.10:34530/rpc/v0",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.yDgjeWxLEvWH1zKXbaEPBdlEK6qxMJhz74alTFJW7zE"
     }
   ]
 }
