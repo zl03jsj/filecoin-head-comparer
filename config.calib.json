@@ -8,11 +8,11 @@
       "enable": "yes",
       "name": "lotus",
       "url": "http://192.168.200.10:3453/rpc/v0",
-      "token": null
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.79W5Rxb6HOlUtpXVJtK8p9W0A8cW5PR9c-hAfb3RKgE"
     },
     {
       "enable": "yes",
-      "name": "venus-release",
+      "name": "venus",
       "url": "http://192.168.200.10:34530/rpc/v0",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.yDgjeWxLEvWH1zKXbaEPBdlEK6qxMJhz74alTFJW7zE"
     }
