@@ -152,7 +152,6 @@ class _conns_manager:
                     if k in x['message'] and k in y['message']:
                         print(x['message'])
                         return True
-
             return to_josn(x) == to_josn(y)
 
         for _, miner in enumerate(miners):
