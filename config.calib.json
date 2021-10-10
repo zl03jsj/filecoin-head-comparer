@@ -4,14 +4,16 @@
   "precommit_url_calib": "https://calibration.filscan.io:8700/rpc/v1",
   "precommit_url_main": "https://api.filscan.io:8700/rpc/v1",
   "miners": [
-    "t01163",
-    "t01126",
-    "t01246",
-    "t015733",
-    "t0101",
-    "t0102",
-    "t017081",
-    "t016647"
+    "t01164",
+    "t03112",
+    "t01247",
+    "t015735",
+    "t01001",
+    "t01002",
+    "t017092",
+    "t019080",
+    "t017093",
+    "t020099"
   ],
   "urls": [
     {

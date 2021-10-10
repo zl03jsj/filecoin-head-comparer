@@ -71,7 +71,7 @@ class _conns_manager:
 
         print('|-ChainHead, height:%d, block:%d, head->%s' % (
             res[0]['height'], len(res[0]['cids']),
-            '100-%match' if matchs else 'mis-match'))
+            '100-%match\n' if matchs else 'mis-match'))
 
         same_height = True
         if False == matchs:
@@ -84,8 +84,8 @@ class _conns_manager:
                     same_height = False
                 print("|- %+16s: height:%d, block:%d, away from time window:%d" % (
                     v['name'], v['height'], len(v['cids']), away))
+            print()
 
-        print()
         return res, same_height, matchs
 
     def do_check_result(self, tipset, method, params, displayName=None, skip=[], checker=None):
@@ -93,24 +93,26 @@ class _conns_manager:
         res = self.post(check_info['method'], check_info['params'])
 
         matchs = True
+        errors = False
 
         d_0 = to_josn(res[0]['result'], skip)
 
         for idx in range(1, len(res)):
-            d = to_josn(res[idx]['result'], skip)
-            if checker is not None or False:
-                matchs = False if not checker(res[0]['result'], res[idx]['result']) else matchs
-            elif d_0 != d:
-                matchs = False
+            if res[idx]['result'] is not None and 'message' in res[idx]['result']:
+                errors = True
+            matchs = False if not matchs else (
+                d_0 == to_josn(res[idx]['result'], skip) if checker is None else checker(res[0]['result'], res[idx]['result']))
 
-        print('|--  method:%s, height:%d, API->%s\n' % (
+        print('|--  method:%s, height:%d, API->%s' % (
             displayName if displayName is not None else method,
-            tipset['height'], '100-%match' if matchs else 'mis-match'))
+            tipset['height'], ('100-%match\n' if not errors else '100-%match [but some errors occurs]') if matchs else 'mis-match'))
 
-        if not matchs or self.always_display_params:
-            print('|---- params:%s' % (params))
+        if self.always_display_params or not matchs or errors:
+            print('|    -params:%s' % (params))
+
+        if not matchs or errors:
             for idx, r in enumerate(res):
-                print('|---- %-16s->%s' % (r['name'], r['result']))
+                print('|    -%-16s-> %s' % (r['name'], r['result']))
             print('\n')
 
         return res[0] if matchs else res, matchs
@@ -150,7 +152,6 @@ class _conns_manager:
             if 'message' in x:
                 for k in keys:
                     if k in x['message'] and k in y['message']:
-                        print(x['message'])
                         return True
             return to_josn(x) == to_josn(y)
 
@@ -158,7 +159,7 @@ class _conns_manager:
             params[0] = miner
             _, m = self.do_check_result(tipset, 'StateMinerPower', params)
             _, m = self.do_check_result(tipset, 'MinerGetBaseInfo', [miner, block['Height'], block['Parents']])
-            _, m = self.do_check_result(tipset, "StateMinerInfo", params)
+            _, m = self.do_check_result(tipset, "StateMinerInfo", params, checker=checker)
             _, m = self.do_check_result(tipset, "StateMinerAvailableBalance", params)
             _, m = self.do_check_result(tipset, "StateMinerRecoveries", params)
             _, m = self.do_check_result(tipset, "StateMinerFaults", params)

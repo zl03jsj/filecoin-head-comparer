@@ -49,7 +49,6 @@ class _conn:
             if 'result' in json_obj:
                 return {'name': self.name, 'result': json_obj['result']}
             else:
-                print("|- method:%s returns error\n|- params:%s\n|- message:%s" % (method, params, json_obj['error']['message']))
                 return {'name': self.name, 'result': json_obj['error']}
 
 

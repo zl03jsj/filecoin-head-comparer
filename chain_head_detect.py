@@ -45,7 +45,6 @@ def loop_check_apis():
     is_api_matched = False
     while True:
         try:
-            print("\n")
             heads, same_height, matched = conn_manager.do_check_heads()
             if not matched:
                 sleep(dur)
