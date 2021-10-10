@@ -287,8 +287,6 @@ class _conns_manager:
                 params = [sct[0], res['result']['Info'], tipset['cids']]
                 self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', params)
                 self.do_check_result(tipset, "StateMinerPreCommitDepositForPower", params)
-            else:
-                print(res)
 
     # MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
     # SyncSubmitBlock(ctx context.Context, blk * types.BlockMsg) error
