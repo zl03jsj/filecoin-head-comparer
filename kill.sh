@@ -7,7 +7,7 @@ function get_process() {
 function kill_all() {
   pid=$(get_process)
   while [ "$pid" != "" ]; do
-    echo kill process $pid
+    echo kill old process: $pid
     kill -9 $pid
     pid=$(get_process)
   done
