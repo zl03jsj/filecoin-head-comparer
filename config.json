@@ -45,10 +45,10 @@
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.3zUavx-3R93dEq4pkR8GlSR3zElcRwfnsVtRGBQJNFA"
     },
     {
-      "enable": "no",
+      "enable": "yes",
       "name": "optimized_19",
       "url": "http://192.168.200.19:3453/rpc/v0",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.mGOZwXsvSBy9pXeFkk7wwpwOJ4wMriW7d3yULHzBHLU"
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.UA23VE8W5R2FYVfNzt2mfMSRAuPh0OGWbswNOiFqM4w"
     }
   ]
 }
