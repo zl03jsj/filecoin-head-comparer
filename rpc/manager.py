@@ -117,16 +117,14 @@ class _conns_manager:
 
         return res[0] if matchs else res, matchs
 
-    def do_check_ChainGetRandomnessFromTickets(self, tipset):
-        addr = "f0128788"
+    def do_check_ChainGetRandomnessFromTickets(self, tipset, addr="f0688165"):
         params = [tipset['cids'], 0, tipset['height'] - 10, addr]
         for idx in range(1, 9):
             params[1] = idx
             self.do_check_result(tipset, 'ChainGetRandomnessFromTickets', params)
 
-    def do_check_CheckChainGetRandomnessFromBeacon(self, tipset):
-        addr = "f0128788"
-        params = [tipset['cids'], 0, tipset['height'] - 10, addr]
+    def do_check_CheckChainGetRandomnessFromBeacon(self, tipset, miner="f0688165"):
+        params = [tipset['cids'], 0, tipset['height'] - 10, miner]
         for idx in range(1, 9):
             params[1] = idx
             self.do_check_result(tipset, 'ChainGetRandomnessFromBeacon', params)
@@ -141,10 +139,6 @@ class _conns_manager:
         tsk = tipset['cids']
         block = tipset['blocks'][0]
         params = ['', tsk]
-
-        self.do_check_result(tipset, "StateVMCirculatingSupplyInternal", [tsk])
-
-        # self.do_check_result(tipset, "StateCirculatingSupply", [tsk])
 
         def checker(x, y):
             keys = ['unknown actor code', 'actor not found']
@@ -246,9 +240,9 @@ class _conns_manager:
             return
 
         msg['Nonce'] = actor['result']['Nonce']
-        msg, matches = self.do_check_result(tipset, 'GasEstimateMessageGas',
-                                            [msg, {'MaxFee': '0', 'GasOverEstimation': 0}, tipset['cids']], skip=['CID'])
-        print("|- EstimateMessageGas returns:%s\n" % (msg))
+        self.do_check_result(tipset, 'GasEstimateMessageGas',
+                             [msg, {'MaxFee': '0', 'GasOverEstimation': 0}, tipset['cids']], skip=['CID'])
+        # print("|- EstimateMessageGas returns:%s\n" % (msg))
         return
 
     def do_check_getbaseinfo(self, tipset, miners=[]):
@@ -260,7 +254,7 @@ class _conns_manager:
 
     def do_check_StateCirculatingSupply(self, tipset):
         params = [tipset['cids']]
-        self.do_check_result(tipset, 'StateCirculatingSupply', params)
+        # self.do_check_result(tipset, 'StateCirculatingSupply', params)
         self.do_check_result(tipset, 'StateVMCirculatingSupplyInternal', params)
 
     def do_check_ChainGetParentReceipts(self, tipset):
@@ -283,7 +277,7 @@ class _conns_manager:
         for sct in sectors:
             sct.append(tipset['cids'])
             res, matches = self.do_check_result(tipset, 'StateSectorPreCommitInfo', sct, checker=checker)
-            if matches and 'result' in res and 'Info' in res['result']:
+            if matches and res is not None and 'result' in res and 'Info' in res['result']:
                 params = [sct[0], res['result']['Info'], tipset['cids']]
                 self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', params)
                 self.do_check_result(tipset, "StateMinerPreCommitDepositForPower", params)
