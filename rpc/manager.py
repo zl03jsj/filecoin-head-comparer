@@ -246,7 +246,7 @@ class _conns_manager:
         return
 
     def do_check_getbaseinfo(self, tipset, miners=[]):
-        miners.extend(['f02438', 'f0131822'])
+        # miners.extend(['f02438', 'f0131822'])
         block = tipset['blocks'][0]
         for miner in miners:
             self.do_check_result(tipset, 'MinerGetBaseInfo', [miner, block['Height'], block['Parents']])
