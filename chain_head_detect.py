@@ -7,19 +7,22 @@ import sys, getopt
 
 miners = ['f02438', 'f0688165', 'f0724216', "f0128788", "f0127595", "f0123261",
           "f0135467", "f0142720", ]
-
-with open("./config.json", 'r') as f:
-    conn_cfgs = json.load(f)
-    if 'miners' in conn_cfgs:
-        miners = conn_cfgs['miners']
-    f.close()
-
-conn_manager = _conns_manager(conn_cfgs)
-
-
 accounts = [
     "f3qzprefkeragndcicaqgztojarm4pzohn7swwqtmtcx42wykpgxtz6rtpn7xsderun5kigfopv3tydhddx4na",
     "f3sfyonhd3apsolzlpl5uy2a7j7jyktekp7v365l2uqo4chmmf7zmkmsry5qru562yhetnruzflmcnldwow6uq"]
+
+with open("./config.json", 'r') as f:
+    conn_cfgs = json.load(f)
+
+    if 'miners' in conn_cfgs:
+        miners = conn_cfgs['miners']
+
+    if 'accounts' in conn_cfgs:
+        accounts = conn_cfgs['accounts']
+
+    f.close()
+
+conn_manager = _conns_manager(conn_cfgs)
 
 actors = miners.copy()
 actors.extend(accounts)
@@ -61,25 +64,19 @@ def loop_check_apis():
                     continue
 
             tipset = heads[0]
-            # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
-            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
+            conn_manager.do_check_getbaseinfo(tipset, miners)
+            conn_manager.do_check_ChainGetRandomnessFromTickets(tipset, miners[1])
+            conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset, miners[1])
             conn_manager.do_check_StateMinerStuff(tipset, miners)
-            # conn_manager.do_check_WalletBalance(tipset, actors)
-            # conn_manager.do_check_StateCirculatingSupply(tipset)
+            conn_manager.do_check_EstimateGas(tipset)
+            conn_manager.do_check_WalletBalance(tipset, actors)
+            conn_manager.do_check_StateCirculatingSupply(tipset)
+            conn_manager.do_check_StateGetActor(tipset, miners)
+            # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
             # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000, 900000000010)
-
-            # is_api_matched = conn_manager.do_check_getbaseinfo(tipset, miners)
-            # conn_manager.do_check_getbaseinfo(tipset, miners)
-            # conn_manager.do_check_StateGetActor(tipset, miners)
-            # conn_manager.do_check_EstimateGas(tipset)
-
-            # conn_manager.do_check_WalletBalance(tipset, actors)
+            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
             # conn_manager.do_check_ChainGetParentReceipts(tipset)
-            # conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
-            # conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
             # conn_manager.do_check_ChainGetBlockMessages(tipset)
-
-            # conn_manager.do_check_EstimateGas(tipset)
         except Exception as e:
             logging.exception(e)
         sleep(dur)

@@ -13,6 +13,10 @@
     "f0135467",
     "f0142720"
   ],
+  "accounts": [
+    "f3qzprefkeragndcicaqgztojarm4pzohn7swwqtmtcx42wykpgxtz6rtpn7xsderun5kigfopv3tydhddx4na",
+    "f3sfyonhd3apsolzlpl5uy2a7j7jyktekp7v365l2uqo4chmmf7zmkmsry5qru562yhetnruzflmcnldwow6uq"
+  ],
   "urls": [
     {
       "enable": "no",
@@ -39,13 +43,13 @@
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
     },
     {
-      "enable": "yes",
+      "enable": "no",
       "name": "optimized_125",
       "url": "http://192.168.1.125:3453/rpc/v0",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.3zUavx-3R93dEq4pkR8GlSR3zElcRwfnsVtRGBQJNFA"
     },
     {
-      "enable": "no",
+      "enable": "yes",
       "name": "optimized_19",
       "url": "http://192.168.200.19:3453/rpc/v0",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.UA23VE8W5R2FYVfNzt2mfMSRAuPh0OGWbswNOiFqM4w"
