@@ -27,6 +27,7 @@ class _thread(Thread):
 
 class _conns_manager:
     conns = []
+    cfg = {}
 
     def __init__(self, cfg):
         for c in cfg['urls']:
@@ -34,6 +35,7 @@ class _conns_manager:
             self.insert(_conn(c['name'], c['url'], c['token']))
         self.always_display_params = cfg['always_display_params']
         self.sector_provider = _precommit_sector_provider(cfg['precommit_url'])
+        self.cfg = cfg
 
     def insert(self, c):
         if not isinstance(c, _conn):
@@ -99,7 +101,9 @@ class _conns_manager:
         d_0 = to_josn(res[0]['result'], skip)
 
         for idx in range(1, len(res)):
-            if res[idx]['result'] is not None and 'message' in res[idx]['result']:
+            if res[idx]['result'] is not None and isinstance(res[idx]['result'],
+                                                             dict) and 'message' in \
+                    res[idx]['result']:
                 errors = True
             matchs = False if not matchs else (
                 d_0 == to_josn(res[idx]['result'], skip) if checker is None else checker(
@@ -133,6 +137,7 @@ class _conns_manager:
             self.do_check_result(tipset, 'ChainGetRandomnessFromBeacon', params)
 
     def do_check_ChainGetBlockMessages(self, tipset):
+        if not self.is_check_slow_apis(): return
         for _, blk in enumerate(tipset['blocks']):
             self.do_check_result(tipset, "ChainReadObj", [blk['Messages']],
                                  displayName='BlockMessages')
@@ -193,26 +198,31 @@ class _conns_manager:
                                  checker=checker)
 
     def do_check_StateMinerSectorAllocated(self, tipset, addresses, start, end):
-        check_count = 10
+        check_count = 5
         for _, miner in enumerate(addresses):
             for i in range(start, end, int(
-                    (end - start) / check_count)) if end - start > check_count else 1:
+                    (end - start) / check_count) if end - start > check_count else 1):
                 parent_key = tipset['blocks'][0]['Parents']
-                res, matches = self.do_check_result(tipset, "StateMinerSectorAllocated",
-                                                    [miner, i, parent_key])
+                res, matches, _ = self.do_check_result(tipset,
+                                                       "StateMinerSectorAllocated",
+                                                       [miner, i, parent_key])
                 if matches and res['result'] is True:
-                    # res, matches = self.do_check_result(tipset, "StateSectorPreCommitInfo", [miner, i, parent_key])
-                    res, matches = self.do_check_result(tipset, 'StateSectorGetInfo',
-                                                        [miner, i, parent_key])
+                    res, matches, _ = self.do_check_result(tipset, 'StateSectorGetInfo',
+                                                           [miner, i, parent_key])
                     if res['result'] is not None and matches:
                         print('|--    StateSectorGetInfo:%s' % (res['result']))
+
+    def is_check_slow_apis(self):
+        key = 'check_slow_apis'
+        return False if key not in self.cfg else self.cfg[key]
 
     def do_check_StateMinerSectorsStuff(self, tipset, addresses):
         miners = addresses[:2]
         parent_key = tipset['blocks'][0]['Parents']
         for _, miner in enumerate(miners):
-            deadlines, matches = self.do_check_result(tipset, "StateMinerProvingDeadline",
-                                                      [miner, parent_key])
+            deadlines, matches, _ = self.do_check_result(tipset,
+                                                         "StateMinerProvingDeadline",
+                                                         [miner, parent_key])
             if matches == True:
                 deadlines = deadlines['result']
                 if not 'Index' in deadlines.keys():
@@ -221,9 +231,9 @@ class _conns_manager:
                             'error, method:StateMinerProvingDeadline, address:%s, key: Index not exist\nresult : %s' % (
                                 addresses[idx], v))
                     return
-                partitions, _ = self.do_check_result(tipset, "StateMinerPartitions",
-                                                     [miner, deadlines['Index'],
-                                                      parent_key])
+                partitions, _, _ = self.do_check_result(tipset, "StateMinerPartitions",
+                                                        [miner, deadlines['Index'],
+                                                         parent_key])
                 if partitions is None:
                     continue
                 for pt in partitions['result']:
@@ -305,8 +315,9 @@ class _conns_manager:
 
         for sct in sectors:
             sct.append(tipset['cids'])
-            res, matches, _ = self.do_check_result(tipset, 'StateSectorPreCommitInfo', sct,
-                                                checker=checker)
+            res, matches, _ = self.do_check_result(tipset, 'StateSectorPreCommitInfo',
+                                                   sct,
+                                                   checker=checker)
             if matches and res is not None and 'result' in res and 'Info' in res[
                 'result']:
                 params = [sct[0], res['result']['Info'], tipset['cids']]
