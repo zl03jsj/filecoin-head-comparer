@@ -117,14 +117,14 @@ class _conns_manager:
 
         return res[0] if matchs else res, matchs
 
-    def do_check_ChainGetRandomnessFromTickets(self, tipset, addr="f0688165"):
-        params = [tipset['cids'], 0, tipset['height'] - 10, addr]
+    def do_check_ChainGetRandomnessFromTickets(self, tipset, b644bytes="MjM0NQ=="):
+        params = [tipset['cids'], 0, tipset['height'] - 10, b644bytes]
         for idx in range(1, 9):
             params[1] = idx
             self.do_check_result(tipset, 'ChainGetRandomnessFromTickets', params)
 
-    def do_check_CheckChainGetRandomnessFromBeacon(self, tipset, miner="f0688165"):
-        params = [tipset['cids'], 0, tipset['height'] - 10, miner]
+    def do_check_CheckChainGetRandomnessFromBeacon(self, tipset, b644bytes="MjM0NQ=="):
+        params = [tipset['cids'], 0, tipset['height'] - 10, b644bytes]
         for idx in range(1, 9):
             params[1] = idx
             self.do_check_result(tipset, 'ChainGetRandomnessFromBeacon', params)

@@ -65,8 +65,8 @@ def loop_check_apis():
 
             tipset = heads[0]
             conn_manager.do_check_getbaseinfo(tipset, miners)
-            conn_manager.do_check_ChainGetRandomnessFromTickets(tipset, miners[1])
-            conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset, miners[1])
+            conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
+            conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
             conn_manager.do_check_StateMinerStuff(tipset, miners)
             conn_manager.do_check_EstimateGas(tipset)
             conn_manager.do_check_WalletBalance(tipset, actors)
