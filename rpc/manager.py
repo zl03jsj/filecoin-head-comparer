@@ -283,6 +283,27 @@ class _conns_manager:
                               tipset['cids']], skip=['CID'])
         return
 
+    def do_check_ChainGetPath(self, tipset):
+        # ChainGetPath(ctx context.Context, from types.TipSetKey, to types.TipSetKey) ([] * api.HeadChange, error) // perm: read
+
+        def checker(x, y):
+            for v in x:
+                del v['Val']['Blocks']
+                del v['Val']['Height']
+            for v in y:
+                del v['Val']['Blocks']
+                v['Val']['Cids'] = v['Val']['Key']
+                del v['Val']['Key']
+
+            xjson, yjson = to_josn(x), to_josn(y)
+            print("%s\n--\n%s\n" % (xjson, yjson))
+
+            return to_josn(x) == to_josn(y)
+
+        res, matches, err = self.do_check_result(tipset, 'ChainGetPath',
+                                                 [[tipset['cids'][0]], tipset['cids']],
+                                                 checker=checker)
+
     def do_check_GetBaseInfo(self, tipset, miners=[]):
         # miners.extend(['f02438', 'f0131822'])
         block = tipset['blocks'][0]

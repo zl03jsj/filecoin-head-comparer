@@ -52,7 +52,7 @@ def loop_check_apis():
             if not matched:
                 sleep(dur)
                 continue
-            elif False and tipset is not None and tipset['cids'] == heads[0]['cids']:
+            elif tipset is not None and tipset['cids'] == heads[0]['cids']:
                 if matched:
                     print("|-- chain head doesn't change, don't need to compare again")
                     sleep(dur)
@@ -64,6 +64,7 @@ def loop_check_apis():
                     continue
 
             tipset = heads[0]
+            conn_manager.do_check_ChainGetPath(tipset)
             conn_manager.do_check_GetBaseInfo(tipset, miners)
             conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
             conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
