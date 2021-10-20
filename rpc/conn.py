@@ -68,9 +68,7 @@ class _precommit_sector_provider:
     def precommitsectors(self):
         res = self.conn.post("filscan.GetMessages", [{"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}])
         res = res['result']['data']
-
         if not isinstance(res, list) and not isinstance(res, slice): return None
-
         return [[s['to'], s['args']['SectorNumber']] for s in res]
 
     def precommitsectorsV2(self):
