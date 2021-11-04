@@ -35,7 +35,7 @@
       "token": null
     },
     {
-      "enable": "yes",
+      "enable": "no",
       "name": "lotus",
       "url": "http://47.115.22.33:1234/rpc/v0",
       "token": null
@@ -47,13 +47,13 @@
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
     },
     {
-      "enable": "no",
+      "enable": "yes",
       "name": "optimized_125",
       "url": "http://192.168.1.125:3453/rpc/v0",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.3zUavx-3R93dEq4pkR8GlSR3zElcRwfnsVtRGBQJNFA"
     },
     {
-      "enable": "yes",
+      "enable": "no",
       "name": "optimized_19",
       "url": "http://192.168.200.19:3453/rpc/v0",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.UA23VE8W5R2FYVfNzt2mfMSRAuPh0OGWbswNOiFqM4w"

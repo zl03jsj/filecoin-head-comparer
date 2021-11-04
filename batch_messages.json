@@ -1,0 +1,5 @@
+"gas_estimate_node": { "enable": "yes",
+"name": "optimized_125",
+"url": "http://192.168.1.125:3453/rpc/v0",
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.3zUavx-3R93dEq4pkR8GlSR3zElcRwfnsVtRGBQJNFA"
+},
