@@ -43,7 +43,6 @@ class _conns_manager:
         self.conns.append(c)
 
     def post(self, method, params=None):
-        method = 'Filecoin.' + method
         ress = []
         threads = []
         for idx, val in enumerate(self.conns):
@@ -248,29 +247,32 @@ class _conns_manager:
             self.do_check_result(tipset, 'WalletBalance', [actor])
 
     def load_message_template(self):
-        msgtype = "don't know"
-        if hasattr(self, 'message'):
-            return self.message[msgtype].copy()
+        msgtype, tipset_key = "don't know", "ts_key"
+        if hasattr(self, 'estiamte_message'):
+            return self.estiamte_message[msgtype].copy(), self.message[ts_key]
 
+        ts_key = None
         with open("./message.json", 'r') as f:
-            self.message = json.load(f)
-            m = self.message[msgtype]
+            self.estiamte_message = json.load(f)
+            m = self.estiamte_message['message']
             m["GasLimit"] = 0
             m["GasFeeCap"] = "0"
             m["GasPremium"] = "0"
+            ts_key = self.estiamte_message[tipset_key]
 
             f.close()
-            return m
+            return m, ts_key
 
     def do_check_EstimateGas(self, tipset):
-        msg = self.load_message_template()
+        (msg, ts_key) = self.load_message_template()
+        if ts_key == None: ts_key = tipset['cids']
 
         checker = lambda x, y: to_josn(x) == to_josn(
             y) if x is not None and 'message' not in x else 'actor not found' in x[
             'message'] and 'actor not found' in y['message']
 
         actor, matches, errors = self.do_check_result(tipset, 'StateGetActor',
-                                                      [msg['From'], tipset['cids']],
+                                                      [msg['from'], ts_key],
                                                       checker=checker)
         if not matches or errors:
             print(
@@ -279,8 +281,8 @@ class _conns_manager:
 
         msg['Nonce'] = actor['result']['Nonce']
         self.do_check_result(tipset, 'GasEstimateMessageGas',
-                             [msg, {'MaxFee': '0', 'GasOverEstimation': 0},
-                              tipset['cids']], skip=['CID'])
+                             [msg, {'MaxFee': '0', 'GasOverEstimation': 1.0},
+                              ts_key], skip=['CID'])
         return
 
     def do_check_ChainGetPath(self, tipset):

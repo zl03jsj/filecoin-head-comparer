@@ -19,12 +19,13 @@ class _conn:
         cids = res['Key'] if 'Key' in res else (res['Cids'] if 'Cids' in res else None)
         blks = res['Blocks'][0]
         return {'cids': cids, 'blocks': res['Blocks'],
-                'height': blks["Height"] if "Height" in blks else blks['height'], 'name': self.name}
+                'height': blks["Height"] if "Height" in blks else blks['height'],
+                'name': self.name}
 
     def post(self, method, params):
         # {"id": 1, "jsonrpc": "2.0", "params": [{"offset_range": {"start": 0, "count": 25}, "method": "PreCommitSector"}],
         #  "method": "filscan.GetMessages"}
-        method = method
+        method = 'Filecoin.' + method
 
         if not isinstance(method, str):
             raise ValueError('method required to be string')
@@ -35,10 +36,12 @@ class _conn:
 
         self.payload["params"] = params
 
-        res = requests.request("POST", self.url, headers=self.header, data=json.dumps(self.payload))
+        res = requests.request("POST", self.url, headers=self.header,
+                               data=json.dumps(self.payload))
         if res.status_code != 200:
             res_obj = json.loads(res.text)
-            print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (self.name, res.status_code, res_obj['error']))
+            print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (
+                self.name, res.status_code, res_obj['error']))
 
             return
         if method == 'Filecoin.ChainHead':
@@ -50,6 +53,36 @@ class _conn:
                 return {'name': self.name, 'result': json_obj['result']}
             else:
                 return {'name': self.name, 'result': json_obj['error']}
+
+    # GasBatchEstimateMessageGas(ctx context.Context, estimateMessages[] * types.EstimateMessage, fromNonce uint64, tsk types.TipSetKey) ([] * types.EstimateResult, error)
+    def batch_estmate_message_gas(self, nonce, messages, tipset_key):
+        return self.post('GasBatchEstimateMessageGas', [messages, nonce, tipset_key])
+
+    def exec_tipste(self, ts_key):
+        return self.post("ExecTipset", [ts_key])
+
+    def chain_estimate_message_gas(self, message, ts_key):
+        return self.post('GasEstimateMessageGas', [message, {'MaxFee':"0", 'GasOverEstimation':1.0}, ts_key])
+
+    # ChainGetParentMessages(ctx context.Context, bcid cid.Cid) ([]apitypes.Message, error)
+    def chain_get_parent_messages(self, cid):
+        return self.post('ChainGetParentMessages', [cid])
+
+    def chain_get_parent_receipts(self, cid):
+        return self.post('ChainGetParentReceipts', [cid])
+
+    # ChainGetParentReceipts(ctx context.Context, bcid cid.Cid) ([] * types.MessageReceipt, error)
+    def chain_get_parent_receipts(self, cid):
+        return self.post('ChainGetParentReceipts', [cid])
+
+    def chain_get_tipset(self, ts_key):
+        return self.post("ChainGetTipSet", [ts_key])
+
+    def chain_get_tipset_by_height(self, height):
+        return self.post("ChainGetTipSetByHeight", [height, None])
+
+    def state_get_actor(self, addr):
+        return self.post("StateGetActor", [addr, None])
 
 
 def to_josn(d, exclude=[]):
@@ -66,13 +99,15 @@ class _precommit_sector_provider:
         self.conn = _conn("precommitsectors_provider", self.url, "")
 
     def precommitsectors(self):
-        res = self.conn.post("filscan.GetMessages", [{"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}])
+        res = self.conn.post("filscan.GetMessages", [
+            {"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}])
         res = res['result']['data']
         if not isinstance(res, list) and not isinstance(res, slice): return None
         return [[s['to'], s['args']['SectorNumber']] for s in res]
 
     def precommitsectorsV2(self):
-        res = requests.get('https://filfox.info/api/v1/message/list?pageSize=5&page=0&method=PreCommitSector')
+        res = requests.get(
+            'https://filfox.info/api/v1/message/list?pageSize=5&page=0&method=PreCommitSector')
         if res.status_code != 200:
             return None
         res = json.loads(res.text)
