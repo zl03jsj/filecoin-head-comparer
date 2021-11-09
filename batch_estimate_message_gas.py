@@ -29,7 +29,7 @@ def main(argv):
     # ts_key = [{'/': 'bafy2bzacecat364rqdch32yrs45vzmbk5bdw7i6ngitu5ikxpmp74piro4l54'},
     #           {'/': 'bafy2bzacecpc2zmxo5pu72su5s3mbool3lumzw65uqvmwch2jppgn6vyelwma'},
     #           {'/': 'bafy2bzacecxh3lesu7c3uy3ji7curyrcgjb6v757iwqozit2zb3xm4y3d3e6c'}, ]
-    head = client.chain_get_tipset_by_height(1250512)['result']
+    head = client.chain_get_tipset_by_height(1260985)['result']
 
     ts_key, block0, = head['Key'], head['Blocks'][0]
     parent_key, block_cid = block0['parents'], ts_key[0]
@@ -41,7 +41,7 @@ def main(argv):
     p_ts = client.chain_get_tipset(parent_key)['result']
     p_ts_block0 = p_ts['Blocks'][0]
     pp_key = p_ts_block0['parents']
-    print(pp_key)
+    # print(pp_key)
 
     # find the first message which 'to' is a miner
     f = 'f3woc2abngxqf3ondoiwnepzvo5rueqd7nbfpngbntntjy4b4e6axyipvzdh53qriqcon6jqm6fie2psd56y5q'
@@ -71,13 +71,18 @@ def main(argv):
     # print(msgs)
 
     # GasBatchEstimateMessageGas
-    estimates = client.batch_estmate_message_gas(from_nonce, msgs, parent_key)['result']
-    estimates = [x['Msg'] for x in estimates]
+    estimates = client.batch_estmate_message_gas(from_nonce, msgs, parent_key)[
+        'result']
+    # estimates = [x['Msg'] for x in estimates]
 
     for idx, msg in enumerate(estimates):
-        print("idx:%d, from:%s, nonce:%d, estimate gaslimit:%d, gasused:%d, equals : %s" % (
-            idx, msg['from'], msg['nonce'], msg['gasLimit'], receipts[idx]['gasUsed'],
-            "ok" if msg['gasLimit'] == receipts[idx]['gasUsed'] else "failed"))
+        msg = estimates[idx]['Msg']
+        err = estimates[idx]['Err']
+        print(
+            "idx:%d, to:%s, nonce:%d, estimate gaslimit:%d, gasused:%d, exitcode:%d %s %s" % (
+                idx, msg['to'], msg['nonce'], msg['gasLimit'],
+                receipts[idx]['gasUsed'], receipts[idx]['exitCode'],
+                'ok' if msg['gasLimit'] == receipts[idx]['gasUsed'] else 'failed', err))
 
 
 def extract_estimate_messages(t, msgs, receipts):
@@ -90,8 +95,8 @@ def extract_estimate_messages(t, msgs, receipts):
         # if msg['Message']['to'] != t:
         #     continue
         c = msg['Message'].copy()
-        # c['gasLimit'] = 0
-        estimates.append({"Msg": c, 'Spec': {"MaxFee": "0", 'GasOverEstimation': 1.0}})
+        c['gasLimit'] = 0
+        estimates.append({"Msg": c, 'Spec': {"MaxFee": "0", 'GasOverEstimation': 1.1}})
         recpts.append(receipts[idx])
         cids.append(msg['Cid'])
 
