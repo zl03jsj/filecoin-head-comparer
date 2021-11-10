@@ -249,7 +249,7 @@ class _conns_manager:
     def load_message_template(self):
         msgtype, tipset_key = "don't know", "ts_key"
         if hasattr(self, 'estiamte_message'):
-            return self.estiamte_message[msgtype].copy(), self.message[ts_key]
+            return self.estiamte_message[msgtype].copy(), self.message[tipset_key]
 
         ts_key = None
         with open("./message.json", 'r') as f:

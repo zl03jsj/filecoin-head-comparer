@@ -44,7 +44,7 @@
       "enable": "no",
       "name": "venus-release",
       "url": "http://120.78.159.125:88/rpc/v0",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoieXotdWJ1bnR1IiwicGVybSI6IndyaXRlIiwiZXh0IjoiIn0.R2-THnLVH3iTliGd-MNEog7FGMmOm77rMkkLXJ4nWqw"
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.oLkKAMWEiUA6oK-stwd3Spiwrx9TlGOuVFgrgn7JPwU"
     },
     {
       "enable": "yes",

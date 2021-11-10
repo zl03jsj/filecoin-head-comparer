@@ -1,0 +1,10 @@
+{
+  "lotus": {
+    "url": "http://192.168.200.21:1234/rpc/v0",
+    "token": ""
+  },
+  "venus": {
+    "url": "http://192.168.1.125:3453/rpc/v0",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.oLkKAMWEiUA6oK-stwd3Spiwrx9TlGOuVFgrgn7JPwU"
+  }
+}
