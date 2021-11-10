@@ -6,6 +6,9 @@ import sys
 client_cfg = {}
 message_cfg = {}
 
+from rpc.lotus_client import lotus_client
+
+
 
 def is_miner_actor(code):
     return code == "bafkqaetgnfwc6nrpon2g64tbm5sw22lomvza"
@@ -22,6 +25,7 @@ with open("./gas_estimate_client.json", 'r') as f:
     client_cfg = cfg['client']
     # messages_cfg = cfg['messages']
 
+print("use url:%s", client_cfg['url'])
 client = _conn(client_cfg['name'], client_cfg['url'], client_cfg['token'])
 
 
@@ -29,12 +33,12 @@ def main(argv):
     # ts_key = [{'/': 'bafy2bzacecat364rqdch32yrs45vzmbk5bdw7i6ngitu5ikxpmp74piro4l54'},
     #           {'/': 'bafy2bzacecpc2zmxo5pu72su5s3mbool3lumzw65uqvmwch2jppgn6vyelwma'},
     #           {'/': 'bafy2bzacecxh3lesu7c3uy3ji7curyrcgjb6v757iwqozit2zb3xm4y3d3e6c'}, ]
-    head = client.chain_get_tipset_by_height(1260985)['result']
+    head = client.chain_get_tipset_by_height(1252354)['result']
 
     ts_key, block0, = head['Key'], head['Blocks'][0]
     parent_key, block_cid = block0['parents'], ts_key[0]
 
-    msgs = client.chain_get_parent_messages(cid=block_cid)['result']
+    originMsgs = client.chain_get_parent_messages(cid=block_cid)['result']
     # print(msgs[0])
     receipts = client.chain_get_parent_receipts(cid=block_cid)['result']
 
@@ -44,17 +48,19 @@ def main(argv):
     # print(pp_key)
 
     # find the first message which 'to' is a miner
-    f = 'f3woc2abngxqf3ondoiwnepzvo5rueqd7nbfpngbntntjy4b4e6axyipvzdh53qriqcon6jqm6fie2psd56y5q'
-    t = 'f0469055'
+    f = 'f3qhnv3q6n2gyabwo2d3wf5xfaajf6y5omerhzsr2tmbientphlzuce6gjdxj43lp4srtd75ay67mcum2w7smq'
+    # t = 'f0469055'
 
     # for idx, msg in enumerate(msgs):
     #     res = client.state_get_actor(msg['Message']['to'])['result']
     #     if is_miner_actor(res['Code']['/']):
     #         f = msg['Message']['from']
     #         break
-    print("-> there are %d messages in tipset : %d" % (len(msgs), p_ts_block0['height']))
+    print("-> there are %d messages in tipset : %d" % (
+        len(originMsgs), p_ts_block0['height']))
 
-    (from_nonce, msgs, receipts, cids) = extract_estimate_messages(t, msgs, receipts)
+    (from_nonce, msgs, receipts, cids) = extract_estimate_messages(f, originMsgs,
+                                                                   receipts)
 
     if False:
         res = client.exec_tipste(ts_key=parent_key)
@@ -79,24 +85,25 @@ def main(argv):
         msg = estimates[idx]['Msg']
         err = estimates[idx]['Err']
         print(
-            "idx:%d, to:%s, nonce:%d, estimate gaslimit:%d, gasused:%d, exitcode:%d %s %s" % (
-                idx, msg['to'], msg['nonce'], msg['gasLimit'],
-                receipts[idx]['gasUsed'], receipts[idx]['exitCode'],
-                'ok' if msg['gasLimit'] == receipts[idx]['gasUsed'] else 'failed', err))
+            "idx:%3d, cid:%s, nonce:%7d, estimate gaslimit:%9d, actuallygasLimit:%9d, gasused:%8d exitcode:%d %s" % (
+                idx, cids[idx]['/'], msg['nonce'], msg['gasLimit'],
+                receipts[idx]['gasLimit'], receipts[idx]['gasUsed'],
+                receipts[idx]['exitCode'], err))
 
 
-def extract_estimate_messages(t, msgs, receipts):
+def extract_estimate_messages(f, msgs, receipts):
     # type EstimateMessage struct { Msg * Message, Spec * MessageSendSpec }
     estimates = []
     recpts = []
     cids = []
-    previous = {}
     for idx, msg in enumerate(msgs):
-        # if msg['Message']['to'] != t:
-        #     continue
+        if msg['Message']['from'] != f:
+            continue
         c = msg['Message'].copy()
+        receipts[idx]['gasLimit'] = c['gasLimit']
+
         c['gasLimit'] = 0
-        estimates.append({"Msg": c, 'Spec': {"MaxFee": "0", 'GasOverEstimation': 1.1}})
+        estimates.append({"Msg": c, 'Spec': {"MaxFee": "0", 'GasOverEstimation': 1.3}})
         recpts.append(receipts[idx])
         cids.append(msg['Cid'])
 

@@ -72,14 +72,18 @@ class _conn:
         return self.post('ChainGetParentReceipts', [cid])
 
     # ChainGetParentReceipts(ctx context.Context, bcid cid.Cid) ([] * types.MessageReceipt, error)
-    def chain_get_parent_receipts(self, cid):
-        return self.post('ChainGetParentReceipts', [cid])
+    # def chain_get_parent_receipts(self, cid):
+    #     return self.post('ChainGetParentReceipts', [cid])
 
     def chain_get_tipset(self, ts_key):
         return self.post("ChainGetTipSet", [ts_key])
 
     def chain_get_tipset_by_height(self, height):
         return self.post("ChainGetTipSetByHeight", [height, None])
+
+    # ChainGetMessagesInTipset(ctx context.Context, key types.TipSetKey) ([]apitypes.Message, error)
+    def chain_get_messages_in_tipset(self, ts_key):
+       return self.post("ChainGetMessagesInTipset", [ts_key])
 
     def state_get_actor(self, addr):
         return self.post("StateGetActor", [addr, None])
