@@ -95,7 +95,7 @@ def check_befor_cmp(idx, l_msg, v_msg):
 
 
 def is_cron_message(v_msg):
-    return msg['from'] == 'f00' and msg['to'] == 'f03' and msg['method'] == 3
+    return v_msg['from'] == 'f00' and v_msg['to'] == 'f03' and v_msg['method'] == 3
 
 
 def cmp_traces(msg_idx, l_msg, v_msg):
