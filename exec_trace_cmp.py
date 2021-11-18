@@ -34,18 +34,20 @@ def main(argv):
     ''')
         return
 
-    lotus_exec_trace = lotus_client.replay_tipset(height=height)
     venus_exec_trace = venus_client.replay_tipset(height=height)
-    cmp_exec_traces(lotus_exec_trace, venus_exec_trace)
+    lotus_exec_trace = lotus_client.replay_tipset(height=height)
+    cmp_exec_traces(height, lotus_exec_trace, venus_exec_trace)
 
 
 show_enable_trace_on_lotus = True
 
 
-def cmp_exec_traces(l_result, v_result):
+def cmp_exec_traces(height, l_result, v_result):
     global show_enable_trace_on_lotus
     if l_result['Root'] == v_result['StateRoot']:
-        print("Venus and lotus got the same state root(%s) after apply tipset(%d)" % (
+        print('''
+    Venus and lotus got the same state root(%s) after apply tipset(%d)
+''' % (
             l_result['Root']['/'], v_result[
                 'Epoch']))
     else:
@@ -55,6 +57,12 @@ def cmp_exec_traces(l_result, v_result):
 
     vmts = v_result['MsgRets']
     lvts = l_result['Trace']
+
+    print('''
+    start compile tipset(%d) traces
+    venus total message count(contain implicit)= %d
+    lotus total message count(contain implicit)= %d
+    ''' % (height, len(vmts), len(lvts)))
 
     func_cmp = cmp_traces
     if lvts[0]['ExecutionTrace']['GasCharges'] is None:
@@ -66,7 +74,7 @@ def cmp_exec_traces(l_result, v_result):
     ''')
         func_cmp = cmp_receipts
 
-    for idx, lmt in enumerate(lvts):
+    for idx, lmt in enumerate(lvts[:len(lvts) - 1]):
         vmt = vmts[idx]
         if not func_cmp(idx, lmt, vmt):
             break
@@ -76,7 +84,11 @@ def cmp_exec_traces(l_result, v_result):
 
 def check_befor_cmp(idx, l_msg, v_msg):
     v_msg_cid = v_msg['MsgCid']
-    if v_msg_cid is None: return True, True, l_msg['MsgCid']
+
+    if is_implict_message(v_msg['Msg']):
+        return True, True, l_msg['MsgCid']['/']
+
+    # if v_msg_cid is None: return True, True, l_msg['MsgCid']
 
     msg_cid_equals = l_msg['Msg']['CID']['/'] == v_msg['MsgCid']['/']
     msg_cid = ""
@@ -94,8 +106,12 @@ def check_befor_cmp(idx, l_msg, v_msg):
     return msg_cid_equals, False, msg_cid
 
 
+def is_implict_message(v_msg):
+    return v_msg['from'] == 'f00' or v_msg['from'] == 't00'
+
+
 def is_cron_message(v_msg):
-    return v_msg['from'] == 'f00' and v_msg['to'] == 'f03' and v_msg['method'] == 3
+    return v_msg['from'] == 'f00' and v_msg['to'] == 'f03' and v_msg['method'] == 2
 
 
 def cmp_traces(msg_idx, l_msg, v_msg):
@@ -104,16 +120,18 @@ def cmp_traces(msg_idx, l_msg, v_msg):
 
     msg = v_msg['Msg']
 
+    func_cmp = lambda lt, vt: lt['Name'] == vt['Name'] and lt['tg'] == vt['tg']
+
+    v_chargs = v_msg['ExecutionTrace']['GasCharges']
+    l_chargs = l_msg['ExecutionTrace']['GasCharges']
     if is_cron_message(msg):
-        print('-> this is a cron message, just compare receipts <-')
-        return cmp_receipts(msg_idx, l_msg, v_msg)
-
-    v_traces = [x for x in v_msg['ExecutionTrace']['GasCharges'] if x['tg'] != 0]
-
-    l_traces = [a for a in l_msg['ExecutionTrace']['GasCharges'] if a['tg'] != 0]
-    # l_traces.extend(
-    #     [w for w in sum([z for z in [y['GasCharges'] for y in [x for x in l_msg[
-    #         'ExecutionTrace']['Subcalls']]]], []) if w['tg'] != 0])
+        print('-> message:%d is a cron message: <-' % (msg_idx))
+        v_traces = [x for x in v_chargs if x['Name'] == 'OnSetActor']
+        l_traces = [x for x in l_chargs if x['Name'] == 'OnSetActor']
+        func_cmp = lambda x, y: x['ex'] == y['ex']
+    else:
+        v_traces = [x for x in v_chargs if x['tg'] != 0]
+        l_traces = [a for a in l_chargs if a['tg'] != 0]
 
     l_trace_size, v_trace_size = len(l_traces), len(v_traces)
     min_size = min(l_trace_size, v_trace_size)
@@ -122,7 +140,7 @@ def cmp_traces(msg_idx, l_msg, v_msg):
 
     for idx in range(0, min_size):
         l_trace, v_trace = l_traces[idx], v_traces[idx]
-        if not cmp_trace(l_trace, v_trace):
+        if not func_cmp(l_trace, v_trace):
             print('''
     message trace(%d) not equals:
     message details : cid:%s, from:%s, to:%s, nonce:%d
@@ -140,24 +158,24 @@ def cmp_traces(msg_idx, l_msg, v_msg):
         isok = False
 
     if implicit:
-        print("implicit message(%s -> %s %d, nonce:%d)" % (
+        print("-> implicit message(%s -> %s, method : %d, nonce:%d) <-" % (
             msg['from'], msg['to'], msg['method'], msg['nonce']))
 
-    print('idx:%3d, Compare msg(%s) stateAfterApply: %s execution-traces: %s' % (
+    print('idx:%3d, Compare msg(%s) state-root: %s execution-traces: %s' % (
         msg_idx, msg_cid, v_msg['StateRootAfterApply']['/'], 'ok' if isok else 'failed'))
 
     return isok
 
 
-def cmp_trace(l_trace, v_trace):
-    return l_trace['Name'] == v_trace['Name'] and l_trace['tg'] == v_trace['tg']
-
-
 def cmp_receipts(idx, l_msg, v_msg):
     (equals, implicit, msg_cid) = check_befor_cmp(idx, l_msg, v_msg)
     if not equals: return False
-    l_receipt = l_msg['MsgRct']
-    v_receipt = v_msg['MsgRct']
+    l_receipt = l_msg['ExecutionTrace']['MsgRct'] if l_msg['ExecutionTrace'][
+                                                         'MsgRct'] is not None else l_msg[
+        'MsgRct']
+    v_receipt = v_msg['ExecutionTrace']['MsgRct'] if v_msg['ExecutionTrace'][
+                                                         'MsgRct'] is not None else v_msg[
+        'MsgRct']
     msg = v_msg['Msg']
 
     if implicit:
