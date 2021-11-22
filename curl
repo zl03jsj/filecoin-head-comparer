@@ -1,0 +1,5 @@
+curl -X -H= {"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":25},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}
+
+
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":25},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}
+'  https://api.filscan.io:8700/rpc/v1

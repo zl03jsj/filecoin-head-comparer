@@ -248,31 +248,27 @@ class _conns_manager:
 
     def load_message_template(self):
         msgtype, tipset_key = "don't know", "ts_key"
-        if hasattr(self, 'estiamte_message'):
-            return self.estiamte_message[msgtype].copy(), self.message[tipset_key]
+        if hasattr(self, 'estimate_message'):
+            return self.estiamte_message[msgtype].copy()
 
-        ts_key = None
         with open("./message.json", 'r') as f:
             self.estiamte_message = json.load(f)
-            m = self.estiamte_message['message']
+            m = self.estiamte_message[msgtype]
             m["GasLimit"] = 0
             m["GasFeeCap"] = "0"
             m["GasPremium"] = "0"
-            ts_key = self.estiamte_message[tipset_key]
-
-            f.close()
-            return m, ts_key
+            return m
 
     def do_check_EstimateGas(self, tipset):
-        (msg, ts_key) = self.load_message_template()
-        if ts_key == None: ts_key = tipset['cids']
+        msg = self.load_message_template()
 
         checker = lambda x, y: to_josn(x) == to_josn(
             y) if x is not None and 'message' not in x else 'actor not found' in x[
             'message'] and 'actor not found' in y['message']
 
+        ts_key = tipset['cids']
         actor, matches, errors = self.do_check_result(tipset, 'StateGetActor',
-                                                      [msg['from'], ts_key],
+                                                      [msg['From'], ts_key],
                                                       checker=checker)
         if not matches or errors:
             print(
@@ -281,8 +277,8 @@ class _conns_manager:
 
         msg['Nonce'] = actor['result']['Nonce']
         self.do_check_result(tipset, 'GasEstimateMessageGas',
-                             [msg, {'MaxFee': '0', 'GasOverEstimation': 1.0},
-                              ts_key], skip=['CID'])
+                             [msg, {'MaxFee': '0', 'GasOverEstimation': 1.25},
+                              ts_key], skip=['CID'], checker=lambda l, v : l['GasLimit']==v['gasLimit'])
         return
 
     def do_check_ChainGetPath(self, tipset):
@@ -297,8 +293,8 @@ class _conns_manager:
                 v['Val']['Cids'] = v['Val']['Key']
                 del v['Val']['Key']
 
-            xjson, yjson = to_josn(x), to_josn(y)
-            print("%s\n--\n%s\n" % (xjson, yjson))
+            # xjson, yjson = to_josn(x), to_josn(y)
+            # print("%s\n--\n%s\n" % (xjson, yjson))
 
             return to_josn(x) == to_josn(y)
 

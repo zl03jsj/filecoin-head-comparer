@@ -64,24 +64,24 @@ def loop_check_apis():
                     continue
 
             tipset = heads[0]
-            # conn_manager.do_check_ChainGetPath(tipset)
-            # conn_manager.do_check_GetBaseInfo(tipset, miners)
-            # conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
-            # conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
-            # conn_manager.do_check_StateMinerStuff(tipset, miners)
+            conn_manager.do_check_ChainGetPath(tipset)
+            conn_manager.do_check_GetBaseInfo(tipset, miners)
+            conn_manager.do_check_ChainGetRandomnessFromTickets(tipset)
+            conn_manager.do_check_CheckChainGetRandomnessFromBeacon(tipset)
+            conn_manager.do_check_StateMinerStuff(tipset, miners)
             conn_manager.do_check_EstimateGas(tipset)
-            # conn_manager.do_check_WalletBalance(tipset, actors)
-            # conn_manager.do_check_StateCirculatingSupply(tipset)
-            # conn_manager.do_check_StateGetActor(tipset, miners)
-            #
-            # if not conn_manager.is_check_slow_apis(): continue
-            #
-            # conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
-            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000,
-            #                                                 900000000010)
-            # conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
-            # conn_manager.do_check_ChainGetParentReceipts(tipset)
-            # conn_manager.do_check_ChainGetBlockMessages(tipset)
+            conn_manager.do_check_WalletBalance(tipset, actors)
+            conn_manager.do_check_StateCirculatingSupply(tipset)
+            conn_manager.do_check_StateGetActor(tipset, miners)
+
+            if not conn_manager.is_check_slow_apis(): continue
+
+            conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
+            conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000,
+                                                            900000000010)
+            conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
+            conn_manager.do_check_ChainGetParentReceipts(tipset)
+            conn_manager.do_check_ChainGetBlockMessages(tipset)
         except Exception as e:
             logging.exception(e)
         sleep(dur)

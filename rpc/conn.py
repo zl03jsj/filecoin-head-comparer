@@ -22,10 +22,10 @@ class _conn:
                 'height': blks["Height"] if "Height" in blks else blks['height'],
                 'name': self.name}
 
-    def post(self, method, params):
+    def post(self, method, params, name_space='Filecoin'):
         # {"id": 1, "jsonrpc": "2.0", "params": [{"offset_range": {"start": 0, "count": 25}, "method": "PreCommitSector"}],
         #  "method": "filscan.GetMessages"}
-        method = 'Filecoin.' + method
+        method = name_space + '.' + method
 
         if not isinstance(method, str):
             raise ValueError('method required to be string')
@@ -35,7 +35,7 @@ class _conn:
             raise ValueError('params required to be list')
 
         self.payload["params"] = params
-
+# curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":25},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}' https://api.filscan.io:8700/rpc/v1
         res = requests.request("POST", self.url, headers=self.header,
                                data=json.dumps(self.payload))
         if res.status_code != 200:
@@ -103,8 +103,8 @@ class _precommit_sector_provider:
         self.conn = _conn("precommitsectors_provider", self.url, "")
 
     def precommitsectors(self):
-        res = self.conn.post("filscan.GetMessages", [
-            {"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}])
+        res = self.conn.post("GetMessages", [
+            {"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}], name_space='filscan')
         res = res['result']['data']
         if not isinstance(res, list) and not isinstance(res, slice): return None
         return [[s['to'], s['args']['SectorNumber']] for s in res]
