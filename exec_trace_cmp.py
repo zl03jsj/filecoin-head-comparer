@@ -6,6 +6,7 @@ import sys
 
 venus_cfg = {}
 lotus_cfg = {}
+block_cid = None
 
 with open("./cfg_exec_trace.json", 'r') as f:
     cfg = json.load(f)
@@ -17,6 +18,7 @@ with open("./cfg_exec_trace.json", 'r') as f:
         os.exit(0)
     venus_cfg = cfg['venus']
     lotus_cfg = cfg['lotus']
+    block_cid = cfg['block_cid']
     print("venus url:%s" % (venus_cfg['url']))
     print("lotus url:%s" % (lotus_cfg['url']))
 
@@ -25,9 +27,10 @@ with open("./cfg_exec_trace.json", 'r') as f:
     only_cmp_receipt = cfg['only_cmp_receipt']
 
 
-def oldversionCheck(height):
-    head = lotus_client.chain_get_tipset_by_height(height)['result']
-    block_cid = head['Cids'][0]
+def oldversionCheck(height, block_cid):
+    if None==block_cid:
+        head = lotus_client.chain_get_tipset_by_height(height)['result']
+        block_cid = head['Cids'][0]
 
     v_msgs = venus_client.chain_get_parent_messages(block_cid)['result']
     l_msgs = lotus_client.chain_get_parent_messages(block_cid)['result']
@@ -74,7 +77,7 @@ def main(argv):
         return
 
     if only_cmp_receipt:
-        return oldversionCheck(height)
+        return oldversionCheck(height, block_cid)
 
     venus_exec_trace = venus_client.replay_tipset(height=height)
     lotus_exec_trace = lotus_client.replay_tipset(height=height)
