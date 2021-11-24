@@ -2,8 +2,8 @@ from rpc.conn import _conn
 
 
 class _lotus_client(_conn):
-    def __init__(self, url, token):
-        super().__init__("lotus", url, token)
+    def __init__(self, url, token, debug=False):
+        super().__init__("lotus", url, token, debug)
 
     def replay_tipset(self, height):
         ts = self.chain_get_tipset_by_height(height)['result']

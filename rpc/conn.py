@@ -1,12 +1,14 @@
 import json
 import requests
+import traceback
 
 
 class _conn:
-    def __init__(self, name, url, token):
+    def __init__(self, name, url, token, debug=False):
         self.name = name
         self.url = url
         self.header = None
+        self.debug = debug
 
         if token and len(token) != 0:
             self.header = {'Authorization': 'Bearer ' + token,
@@ -35,9 +37,15 @@ class _conn:
             raise ValueError('params required to be list')
 
         self.payload["params"] = params
-# curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":25},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}' https://api.filscan.io:8700/rpc/v1
+        # curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":25},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}' https://api.filscan.io:8700/rpc/v1
         res = requests.request("POST", self.url, headers=self.header,
                                data=json.dumps(self.payload))
+        if self.debug:
+            print(''' 
+-> http post information: <-
+   method: %s, param:%s
+   http response: %s
+            ''' % (method, params, res.text))
         if res.status_code != 200:
             res_obj = json.loads(res.text)
             print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (
@@ -62,7 +70,8 @@ class _conn:
         return self.post("ExecTipset", [ts_key])
 
     def chain_estimate_message_gas(self, message, ts_key):
-        return self.post('GasEstimateMessageGas', [message, {'MaxFee':"0", 'GasOverEstimation':1.0}, ts_key])
+        return self.post('GasEstimateMessageGas',
+                         [message, {'MaxFee': "0", 'GasOverEstimation': 1.0}, ts_key])
 
     # ChainGetParentMessages(ctx context.Context, bcid cid.Cid) ([]apitypes.Message, error)
     def chain_get_parent_messages(self, cid):
@@ -81,12 +90,15 @@ class _conn:
     def chain_get_tipset(self, ts_key):
         return self.post("ChainGetTipSet", [ts_key])
 
+    def chain_get_block(self, block_cid):
+        return self.post("ChainGetBlock", [block_cid])
+
     def chain_get_tipset_by_height(self, height):
         return self.post("ChainGetTipSetByHeight", [height, None])
 
     # ChainGetMessagesInTipset(ctx context.Context, key types.TipSetKey) ([]apitypes.Message, error)
     def chain_get_messages_in_tipset(self, ts_key):
-       return self.post("ChainGetMessagesInTipset", [ts_key])
+        return self.post("ChainGetMessagesInTipset", [ts_key])
 
     def state_get_actor(self, addr):
         return self.post("StateGetActor", [addr, None])
@@ -107,7 +119,8 @@ class _precommit_sector_provider:
 
     def precommitsectors(self):
         res = self.conn.post("GetMessages", [
-            {"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}], name_space='filscan')
+            {"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}],
+                             name_space='filscan')
         res = res['result']['data']
         if not isinstance(res, list) and not isinstance(res, slice): return None
         return [[s['to'], s['args']['SectorNumber']] for s in res]
@@ -118,3 +131,14 @@ class _precommit_sector_provider:
         if res.status_code != 200:
             return None
         res = json.loads(res.text)
+
+
+def check_response(res):
+    is_err = 'message' in res
+    if is_err:
+        lines = traceback.format_stack()
+        line = lines[len(lines) - 2]
+        print('''
+  %s
+    response err message:%s''' % (line, res['message']))
+    return is_err

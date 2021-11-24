@@ -1,5 +1,6 @@
 from rpc.venus_client import _venus_client
 from rpc.lotus_client import _lotus_client
+from rpc.conn import check_response
 import json
 import os
 import sys
@@ -18,26 +19,40 @@ with open("./cfg_exec_trace.json", 'r') as f:
         os.exit(0)
     venus_cfg = cfg['venus']
     lotus_cfg = cfg['lotus']
-    block_cid = cfg['block_cid']
-    print("venus url:%s" % (venus_cfg['url']))
-    print("lotus url:%s" % (lotus_cfg['url']))
 
-    venus_client = _venus_client(venus_cfg['url'], venus_cfg['token'])
-    lotus_client = _lotus_client(lotus_cfg['url'], lotus_cfg['token'])
+    if 'block_cid' in cfg:
+        block_cid = cfg['block_cid']
+
+    print('''
+    venus url:%s
+    lotus url:%s
+     '''% (venus_cfg['url'], lotus_cfg['url']))
+
+    debug = False
+    if 'debug_mode' in cfg:
+        debug = cfg['debug_mode']
+
+    venus_client = _venus_client(venus_cfg['url'], venus_cfg['token'], debug)
+    lotus_client = _lotus_client(lotus_cfg['url'], lotus_cfg['token'], debug)
     only_cmp_receipt = cfg['only_cmp_receipt']
 
 
-def oldversionCheck(height, block_cid):
-    if None==block_cid:
+def only_check_receipts(height, block_cid=None):
+    if block_cid is None:
+        print('\tuse block_cid:%s in configurations\n' %(block_cid))
         head = lotus_client.chain_get_tipset_by_height(height)['result']
         block_cid = head['Cids'][0]
+        height = lotus_client.chain_get_block(block_cid)['result']['Height']
 
     v_msgs = venus_client.chain_get_parent_messages(block_cid)['result']
+    if check_response(v_msgs):return
+
     l_msgs = lotus_client.chain_get_parent_messages(block_cid)['result']
+    if check_response(l_msgs):return
 
     print('''
-    message count, venus:%d, lotus:%d
-     ''' % (len(v_msgs), len(l_msgs)))
+    message count, venus:%d, lotus:%d, height=%s, block_cid=%s
+     ''' % (len(v_msgs), len(l_msgs), height, block_cid))
 
     v_receipts = venus_client.chain_get_parent_receipts(block_cid)['result']
     l_receipts = lotus_client.chain_get_parent_receipts(block_cid)['result']
@@ -77,7 +92,7 @@ def main(argv):
         return
 
     if only_cmp_receipt:
-        return oldversionCheck(height, block_cid)
+        return only_check_receipts(height, block_cid)
 
     venus_exec_trace = venus_client.replay_tipset(height=height)
     lotus_exec_trace = lotus_client.replay_tipset(height=height)
