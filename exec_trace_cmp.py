@@ -39,10 +39,13 @@ with open("./cfg_exec_trace.json", 'r') as f:
 
 def only_check_receipts(height, block_cid=None):
     if block_cid is None:
-        print('\tuse block_cid:%s in configurations\n' %(block_cid))
+        print('    use height:%s in configurations' %(height))
         head = lotus_client.chain_get_tipset_by_height(height)['result']
         block_cid = head['Cids'][0]
         height = lotus_client.chain_get_block(block_cid)['result']['Height']
+    else:
+        print('    use block_cid:%s in configurations', block_cid['/'])
+
 
     v_msgs = venus_client.chain_get_parent_messages(block_cid)['result']
     if check_response(v_msgs):return
