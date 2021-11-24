@@ -22,6 +22,45 @@ with open("./cfg_exec_trace.json", 'r') as f:
 
     venus_client = _venus_client(venus_cfg['url'], venus_cfg['token'])
     lotus_client = _lotus_client(lotus_cfg['url'], lotus_cfg['token'])
+    only_cmp_receipt = cfg['only_cmp_receipt']
+
+
+def oldversionCheck(height):
+    head = lotus_client.chain_get_tipset_by_height(height)['result']
+    block_cid = head['Cids'][0]
+
+    v_msgs = venus_client.chain_get_parent_messages(block_cid)['result']
+    l_msgs = lotus_client.chain_get_parent_messages(block_cid)['result']
+
+    print('''
+    message count, venus:%d, lotus:%d
+     ''' % (len(v_msgs), len(l_msgs)))
+
+    v_receipts = venus_client.chain_get_parent_receipts(block_cid)['result']
+    l_receipts = lotus_client.chain_get_parent_receipts(block_cid)['result']
+
+    for idx in range(0, len(v_msgs)):
+        msg = l_msgs[idx]
+        v_rect = v_receipts[idx]
+        l_rect = l_receipts[idx]
+        isok = v_rect['gasUsed'] == l_rect['GasUsed']
+
+        print(
+            'idx:%3d, cid:%s, %s' % (
+                idx, msg['Cid']['/'], 'ok' if isok else 'not equals'))
+
+        if not isok:
+            print('''
+    venus-receipt: %s
+    lotus_receitp: %s
+    
+    messsage: %s
+    
+    ''' % (v_rect, l_rect, json.dumps(msg['Message'], indent=6)))
+            break
+
+    # venus_client.chain_get_tipset_by_height()
+    # venus_client.chain_get_parent_messages()
 
 
 def main(argv):
@@ -33,6 +72,9 @@ def main(argv):
     python3 ./exec_trace_cmp.py <epoch height>
     ''')
         return
+
+    if only_cmp_receipt:
+        return oldversionCheck(height)
 
     venus_exec_trace = venus_client.replay_tipset(height=height)
     lotus_exec_trace = lotus_client.replay_tipset(height=height)

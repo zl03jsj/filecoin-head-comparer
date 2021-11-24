@@ -75,6 +75,9 @@ class _conn:
     # def chain_get_parent_receipts(self, cid):
     #     return self.post('ChainGetParentReceipts', [cid])
 
+    def chain_get_head(self):
+        return self.post("ChainHead", [])
+
     def chain_get_tipset(self, ts_key):
         return self.post("ChainGetTipSet", [ts_key])
 

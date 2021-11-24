@@ -1,4 +1,6 @@
 {
+  "only_cmp_receipt": true,
+  "height": "452760",
   "lotus": {
     "url": "http://192.168.200.21:1234/rpc/v0",
     "token": ""
