@@ -329,6 +329,8 @@ class _conns_manager:
                 'result']:
                 params = [sct[0], res['result']['Info'], tipset['cids']]
                 self.do_check_result(tipset, 'StateMinerInitialPledgeCollateral', params)
+                # Params for repeating api 'StateMinerPreCommitDepositForPower' un-consensus problem
+                # params = json.loads('["f01578658", {"SealProof": 8, "SectorNumber": 17661, "SealedCID": {"/": "bagboea4b5abcbejuhtmxfu4onwodjoexmm2nklwdbgh4kd55vatxfgbundz2ddia"}, "SealRandEpoch": 1437643, "DealIDs": [3218825], "Expiration": 2992929, "ReplaceCapacity": false, "ReplaceSectorDeadline": 0, "ReplaceSectorPartition": 0, "ReplaceSectorNumber": 0}, [{"/": "bafy2bzacea2bq6apooij7pqoxuef43vwcy4ins5m3homyq7fgons3g223yi6e"}, {"/": "bafy2bzacea7pncy27vyk55lujkbukoro2ls22xvhblbbo4gc4uvikp42xdbsc"}]]')
                 self.do_check_result(tipset, "StateMinerPreCommitDepositForPower", params)
 
     # MinerCreateBlock(context.Context, *BlockTemplate)(*types.BlockMsg, error)
