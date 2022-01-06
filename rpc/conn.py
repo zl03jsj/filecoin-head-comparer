@@ -116,21 +116,19 @@ def remove_key(v, exclude):
     if v is None or isinstance(v, int) or isinstance(v, str): return v
     else: v = v.copy()
     if isinstance(v, dict): dict_remove_key(v, exclude)
-    if isinstance(v, slice) or isinstance(v, list):
+    elif isinstance(v, slice) or isinstance(v, list):
         for idx, e in enumerate(v):
-            if not isinstance(e, dict): continue
-            v[idx] = dict_remove_key(e, exclude)
+            dict_remove_key(e, exclude)
     return v
 
 def dict_remove_key(v, exclude):
-    if not isinstance(v, dict): return
-    if len(exclude) > 0 and isinstance(v, dict):
-        for k in exclude:
-            if k in v.keys(): del v[k]
+    if len(exclude) == 0 or not isinstance(v, dict): return
+    for k in exclude:
+        if k in v.keys(): del v[k]
 
 
 def to_josn(v, exclude=[]):
-    d = remove_key(v, exclude)
+    v = remove_key(v, exclude)
     return json.dumps(v, default=lambda o: o.__dict__, sort_keys=True).lower()
 
 

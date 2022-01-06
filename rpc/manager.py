@@ -207,9 +207,9 @@ class _conns_manager:
                                                        [miner, i, parent_key])
                 if matches and res['result'] is True:
                     res, matches, _ = self.do_check_result(tipset, 'StateSectorGetInfo',
-                                                           [miner, i, parent_key])
-                    if res['result'] is not None and matches:
-                        print('|--    StateSectorGetInfo:%s' % (res['result']))
+                                                           [miner, i, parent_key], skip=["SectorKeyCID"])
+                    # if matches and res['result'] is not None:
+                    #     print('|--    StateSectorGetInfo:%s' % (res['result']))
 
     def is_check_slow_apis(self):
         key = 'check_slow_apis'
