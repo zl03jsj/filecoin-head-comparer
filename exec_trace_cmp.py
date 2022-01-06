@@ -9,6 +9,31 @@ venus_cfg = {}
 lotus_cfg = {}
 block_cid = None
 
+messages = [{"/": "bafy2bzacebqzmce7ryytifmionufwip6ycxekmq7riummnkjckpicxy2tl542"},
+            {"/": "bafy2bzaceda46lersgjmxyt5ohh747b63zrktvjxkqz2gae3bxkpeuirncjug"},
+            {"/": "bafy2bzacebc3tn24otl7kwrtclkewmz7n52wug3gtrp5y2c4pkzw2jbsr7m34"},
+            {"/": "bafy2bzacedvmkbmagfxqa6zsqq7vrbdejbuhvlkmfsfwq7imd7mmwqwm5vwda"},
+            {"/": "bafy2bzacedqpayyhuh3257ddy5pjy6dyl2wzyxjeqo4mhhgcqp3pzrfm6ptum"},
+            {"/": "bafy2bzacea7d3pidjkrsfqyptjurhfzd3pzn5xtg6jwiediklkheeih5s5ai2"},
+            {"/": "bafy2bzacecadvykxtaoijrej6vfnpyudy4cqem3fu74b5maifgomzuj2s4beu"},
+            {"/": "bafy2bzaceddzm4rziqwgtjdjskgjnpocx6smte2tkej7yxwqowhbm2cx7a2ii"},
+            {"/": "bafy2bzaced6xealtmbg4jmtahtd3nkpbqyyz4iygnyxgczhsjkoryynb2u5uy"},
+            {"/": "bafy2bzacecm6y4dpjrxauoyvptmqkvdrignjmlkb5wulu3uaamjna7gqhdmb2"},
+            {"/": "bafy2bzacedfi335si2jgli53piswegld54fp5vqfbxe3jzxzwfejlj4jedttm"},
+            {"/": "bafy2bzacealvmlg3nxhfz7ok4e3mlm6zexqvv2qrddzuzudvthovsyfo5busq"},
+            {"/": "bafy2bzacecyso7rjqep5uo3zcqv6u2m5p54p25c3kobedxrcugvo6hzh54ohc"},
+            {"/": "bafy2bzaceauwc5kfjmchspkiozemco4j636sqoj33grevn4b7vo527erdmagu"},
+            {"/": "bafy2bzacea7nglbjn3lv354s2ydt44kzhecarezgpvxcnmqvpr6jvu5zek7ne"},
+            {"/": "bafy2bzaced76cuzmjlvfn4rho47o2dx3psuzgh2kulqotkchqyqqi5dm7vyok"},
+            {"/": "bafy2bzacedflsijew7h35vrtkkcq36oerhwlycs6mxwarz2wm4anku6ul2fbq"},
+            {"/": "bafy2bzacedlc3exicm4jz6hdgilpoa2szzk3iovl3fifyt5cvuxo5zumxx4zs"},
+            {"/": "bafy2bzacebyvmrxtynl72qqgrwu3q6mnwd7b2igvwwikh7cussll4bwlsqpy4"},
+            {"/": "bafy2bzacear32z3taevptweb4ulolo4rtnyguuo73lzyowmzls6ff42bhbziw"},
+            {"/": "bafy2bzaceca4prkb2oqks4cs725cdyjb47ex5wdat6yp3sogib5hkn5vcncsu"},
+            {"/": "bafy2bzacecfzupggl37u6xouegkkyil43iuk537evpfylb3tv2cmoizl56jiq"},
+            {"/": "bafy2bzaceaztftt42liz3bzn7olfob6dhbh6frdy42zf6mx4ixsgrrn2jfvhq"},
+            {"/": "bafy2bzacecmsrcizhqk3q3ay2elv46eu67nfa2okw7krzkdwya7yrjy2oklpc"}, ]
+
 with open("./cfg_exec_trace.json", 'r') as f:
     cfg = json.load(f)
     if 'venus' not in cfg:
@@ -26,7 +51,7 @@ with open("./cfg_exec_trace.json", 'r') as f:
     print('''
     venus url:%s
     lotus url:%s
-     '''% (venus_cfg['url'], lotus_cfg['url']))
+     ''' % (venus_cfg['url'], lotus_cfg['url']))
 
     debug = False
     if 'debug_mode' in cfg:
@@ -39,19 +64,18 @@ with open("./cfg_exec_trace.json", 'r') as f:
 
 def only_check_receipts(height, block_cid=None):
     if block_cid is None:
-        print('    use height:%s in configurations' %(height))
+        print('    use height:%s in configurations' % (height))
         head = lotus_client.chain_get_tipset_by_height(height)['result']
         block_cid = head['Cids'][0]
         height = lotus_client.chain_get_block(block_cid)['result']['Height']
     else:
         print('    use block_cid:%s in configurations', block_cid['/'])
 
-
     v_msgs = venus_client.chain_get_parent_messages(block_cid)['result']
-    if check_response(v_msgs):return
+    if check_response(v_msgs): return
 
     l_msgs = lotus_client.chain_get_parent_messages(block_cid)['result']
-    if check_response(l_msgs):return
+    if check_response(l_msgs): return
 
     print('''
     message count, venus:%d, lotus:%d, height=%s, block_cid=%s
@@ -93,7 +117,6 @@ def main(argv):
     python3 ./exec_trace_cmp.py <epoch height>
     ''')
         return
-
     if only_cmp_receipt:
         return only_check_receipts(height, block_cid)
 

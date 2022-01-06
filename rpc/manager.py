@@ -237,7 +237,10 @@ class _conns_manager:
                     continue
                 for pt in partitions['result']:
                     params = [miner, pt['ActiveSectors'], parent_key]
-                    self.do_check_result(tipset, 'StateMinerSectors', params)
+                    self.do_check_result(tipset, 'StateMinerSectors', params,
+                                         skip=["SectorKeyCID"])
+            # this checking have very bad performance!
+            # sectors, _, _ = self.do_check_result(tipset, "StateMinerActiveSectors", [miner, parent_key], checker=sector_checker)
 
     def do_check_WalletBalance(self, tipset, actors):
         actors = actors.copy()
@@ -278,29 +281,14 @@ class _conns_manager:
         msg['Nonce'] = actor['result']['Nonce']
         self.do_check_result(tipset, 'GasEstimateMessageGas',
                              [msg, {'MaxFee': '0', 'GasOverEstimation': 1.25},
-                              ts_key], skip=['CID'], checker=lambda l, v : l['GasLimit']==v['gasLimit'])
+                              ts_key], skip=['CID'],
+                             checker=lambda l, v: l['GasLimit'] == v['GasLimit'])
         return
 
     def do_check_ChainGetPath(self, tipset):
         # ChainGetPath(ctx context.Context, from types.TipSetKey, to types.TipSetKey) ([] * api.HeadChange, error) // perm: read
-
-        def checker(x, y):
-            for v in x:
-                del v['Val']['Blocks']
-                del v['Val']['Height']
-            for v in y:
-                del v['Val']['Blocks']
-                v['Val']['Cids'] = v['Val']['Key']
-                del v['Val']['Key']
-
-            # xjson, yjson = to_josn(x), to_josn(y)
-            # print("%s\n--\n%s\n" % (xjson, yjson))
-
-            return to_josn(x) == to_josn(y)
-
         res, matches, err = self.do_check_result(tipset, 'ChainGetPath',
-                                                 [[tipset['cids'][0]], tipset['cids']],
-                                                 checker=checker)
+                                                 [[tipset['cids'][0]], tipset['cids']])
 
     def do_check_GetBaseInfo(self, tipset, miners=[]):
         # miners.extend(['f02438', 'f0131822'])

@@ -100,16 +100,38 @@ class _conn:
     def chain_get_messages_in_tipset(self, ts_key):
         return self.post("ChainGetMessagesInTipset", [ts_key])
 
-    def state_get_actor(self, addr):
-        return self.post("StateGetActor", [addr, None])
+    def chain_get_message(self, msg_id):
+        return self.post("ChainGetMessage", [msg_id])
+
+    # StateSearchMsg(ctx context.Context, from types.TipSetKey, msg cid.Cid, limit abi.ChainEpoch, allowReplaced bool) (*MsgLookup, error) //perm:read
+    def state_search_message(self, msg_id):
+        return self.post("StateSearchMsg", [msg_id])
 
 
-def to_josn(d, exclude=[]):
-    d = d if d is None or isinstance(d, int) or isinstance(d, str) else d.copy()
-    if len(exclude) > 0 and isinstance(d, dict):
+def state_get_actor(self, addr):
+    return self.post("StateGetActor", [addr, None])
+
+
+def remove_key(v, exclude):
+    if v is None or isinstance(v, int) or isinstance(v, str): return v
+    else: v = v.copy()
+    if isinstance(v, dict): dict_remove_key(v, exclude)
+    if isinstance(v, slice) or isinstance(v, list):
+        for idx, e in enumerate(v):
+            if not isinstance(e, dict): continue
+            v[idx] = dict_remove_key(e, exclude)
+    return v
+
+def dict_remove_key(v, exclude):
+    if not isinstance(v, dict): return
+    if len(exclude) > 0 and isinstance(v, dict):
         for k in exclude:
-            if k in d.keys(): del d[k]
-    return json.dumps(d, default=lambda o: o.__dict__, sort_keys=True).lower()
+            if k in v.keys(): del v[k]
+
+
+def to_josn(v, exclude=[]):
+    d = remove_key(v, exclude)
+    return json.dumps(v, default=lambda o: o.__dict__, sort_keys=True).lower()
 
 
 class _precommit_sector_provider:
