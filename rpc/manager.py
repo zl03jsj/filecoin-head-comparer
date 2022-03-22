@@ -63,12 +63,26 @@ class _conns_manager:
         matchs = True
         d_0 = json.dumps((res[0]['height'], res[0]['cids']))
 
+        latest_match = False
+        head_changed = False
+        if not hasattr(self, "latest_d0"): head_changed = True
+        else: head_changed = self.latest_d0 != d_0
+
+        if not hasattr(self, "latest_match"): self.latest_match = False
+
+        if not head_changed and self.latest_match:
+            return res, True, True
+
+        self.latest_d0 = d_0
+
         for idx in range(1, len(res)):
             if res[idx] is None: continue
             d = json.dumps((res[idx]['height'], res[idx]['cids']))
             if d_0 != d:
                 matchs = False
                 break
+
+        self.latest_match = matchs
 
         print('|-ChainHead, height:%d, block:%d, head->%s' % (
             res[0]['height'], len(res[0]['cids']),
@@ -289,6 +303,11 @@ class _conns_manager:
         # ChainGetPath(ctx context.Context, from types.TipSetKey, to types.TipSetKey) ([] * api.HeadChange, error) // perm: read
         res, matches, err = self.do_check_result(tipset, 'ChainGetPath',
                                                  [[tipset['cids'][0]], tipset['cids']])
+
+    # def do_check_GetActor(self, actors, tipset):
+    #     for actor in actors:
+    #         res, matches, err = self.do_check_result(tipset, 'GetActor',
+    #                                              [actor, tipset['cids']])
 
     def do_check_GetBaseInfo(self, tipset, miners=[]):
         # miners.extend(['f02438', 'f0131822'])
