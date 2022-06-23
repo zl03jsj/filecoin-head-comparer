@@ -5,10 +5,8 @@ from time import sleep
 import logging
 import sys, getopt
 
-miners = ['f02438', 'f0688165', 'f0724216', "f0128788", "f0127595", "f0123261",
-          "f0135467", "f0142720", ]
-accounts = [
-    "f3qzprefkeragndcicaqgztojarm4pzohn7swwqtmtcx42wykpgxtz6rtpn7xsderun5kigfopv3tydhddx4na",
+miners = ['f02438', 'f0688165', 'f0724216', "f0128788", "f0127595", "f0123261", "f0135467", "f0142720", ]
+accounts = ["f3qzprefkeragndcicaqgztojarm4pzohn7swwqtmtcx42wykpgxtz6rtpn7xsderun5kigfopv3tydhddx4na",
     "f3sfyonhd3apsolzlpl5uy2a7j7jyktekp7v365l2uqo4chmmf7zmkmsry5qru562yhetnruzflmcnldwow6uq"]
 
 with open("./config.json", 'r') as f:
@@ -58,8 +56,7 @@ def loop_check_apis():
                     sleep(dur)
                     continue
                 elif is_api_matched:
-                    print(
-                        "|-- api check result is already be true, don't need to compare again")
+                    print("|-- api check result is already be true, don't need to compare again")
                     sleep(dur)
                     continue
 
@@ -73,12 +70,10 @@ def loop_check_apis():
             conn_manager.do_check_WalletBalance(tipset, actors)
             conn_manager.do_check_StateCirculatingSupply(tipset)
             conn_manager.do_check_StateGetActor(tipset, miners)
-
+            conn_manager.do_check_StateLookupRobustAddress(tipset)
             if not conn_manager.is_check_slow_apis(): continue
-
             conn_manager.do_check_StateMinerSectorsStuff(tipset, miners)
-            conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000,
-                                                            900000000010)
+            conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 900000000000, 900000000010)
             conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
             conn_manager.do_check_ChainGetParentReceipts(tipset)
             conn_manager.do_check_ChainGetBlockMessages(tipset)

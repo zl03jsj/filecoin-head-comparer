@@ -1,6 +1,9 @@
 import json
-import requests
 import traceback
+
+import requests
+
+from rpc.utils import is_error, dict_exists_path
 
 
 class _conn:
@@ -11,8 +14,7 @@ class _conn:
         self.debug = debug
 
         if token and len(token) != 0:
-            self.header = {'Authorization': 'Bearer ' + token,
-                           'Content-Type': 'application/json'}
+            self.header = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
 
         self.payload = {"jsonrpc": "2.0", "id": 1, }
 
@@ -20,8 +22,7 @@ class _conn:
         # [x['/'] for x in ((res['Cids'] if 'Cids' in res else res['Key']))]
         cids = res['Key'] if 'Key' in res else (res['Cids'] if 'Cids' in res else None)
         blks = res['Blocks'][0]
-        return {'cids': cids, 'blocks': res['Blocks'],
-                'height': blks["Height"] if "Height" in blks else blks['height'],
+        return {'cids': cids, 'blocks': res['Blocks'], 'height': blks["Height"] if "Height" in blks else blks['height'],
                 'name': self.name}
 
     def post(self, method, params, name_space='Filecoin'):
@@ -37,9 +38,7 @@ class _conn:
             raise ValueError('params required to be list')
 
         self.payload["params"] = params
-        # curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":25},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}' https://api.filscan.io:8700/rpc/v1
-        res = requests.request("POST", self.url, headers=self.header,
-                               data=json.dumps(self.payload))
+        res = requests.request("POST", self.url, headers=self.header, data=json.dumps(self.payload))
         if self.debug:
             print(''' 
 -> http post information: <-
@@ -47,9 +46,8 @@ class _conn:
    http response: %s
             ''' % (method, params, res.text))
         if res.status_code != 200:
-            res_obj = json.loads(res.text)
-            print("unexpected, post to %-15s failed, status_code=%d, error=%s" % (
-                self.name, res.status_code, res_obj['error']))
+            print("unexpected, post to %-15s failed, status_code=%d, text:%s" % (
+                self.name, res.status_code, res.text))
 
             return
         if method == 'Filecoin.ChainHead':
@@ -57,10 +55,10 @@ class _conn:
         else:
             json_obj = json.loads(res.text)
 
-            if 'result' in json_obj:
-                return {'name': self.name, 'result': json_obj['result']}
-            else:
+            if is_error(json_obj):
                 return {'name': self.name, 'result': json_obj['error']}
+            else:
+                return {'name': self.name, 'result': json_obj['result']}
 
     # GasBatchEstimateMessageGas(ctx context.Context, estimateMessages[] * types.EstimateMessage, fromNonce uint64, tsk types.TipSetKey) ([] * types.EstimateResult, error)
     def batch_estmate_message_gas(self, nonce, messages, tipset_key):
@@ -70,8 +68,7 @@ class _conn:
         return self.post("ExecTipset", [ts_key])
 
     def chain_estimate_message_gas(self, message, ts_key):
-        return self.post('GasEstimateMessageGas',
-                         [message, {'MaxFee': "0", 'GasOverEstimation': 1.0}, ts_key])
+        return self.post('GasEstimateMessageGas', [message, {'MaxFee': "0", 'GasOverEstimation': 1.0}, ts_key])
 
     # ChainGetParentMessages(ctx context.Context, bcid cid.Cid) ([]apitypes.Message, error)
     def chain_get_parent_messages(self, cid):
@@ -107,19 +104,26 @@ class _conn:
     def state_search_message(self, msg_id):
         return self.post("StateSearchMsg", [msg_id])
 
+    def list_miners(self):
+        return self.post("StateListMiners", [None])
 
-def state_get_actor(self, addr):
-    return self.post("StateGetActor", [addr, None])
+
+    def state_get_actor(self, addr):
+        return self.post("StateGetActor", [addr, None])
 
 
 def remove_key(v, exclude):
-    if v is None or isinstance(v, int) or isinstance(v, str): return v
-    else: v = v.copy()
-    if isinstance(v, dict): dict_remove_key(v, exclude)
+    if v is None or isinstance(v, int) or isinstance(v, str):
+        return v
+    else:
+        v = v.copy()
+    if isinstance(v, dict):
+        dict_remove_key(v, exclude)
     elif isinstance(v, slice) or isinstance(v, list):
         for idx, e in enumerate(v):
             dict_remove_key(e, exclude)
     return v
+
 
 def dict_remove_key(v, exclude):
     if len(exclude) == 0 or not isinstance(v, dict): return
@@ -138,16 +142,15 @@ class _precommit_sector_provider:
         self.conn = _conn("precommitsectors_provider", self.url, "")
 
     def precommitsectors(self):
-        res = self.conn.post("GetMessages", [
-            {"offset_range": {"start": 0, "count": 10}, "method": "PreCommitSector"}],
+        # curl https://api.filscan.io:8700/rpc/v1 -X POST -H "Content-Type: application/json"  -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":5},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}'
+        res = self.conn.post("GetMessages", [{"offset_range": {"start": 0, "count": 5}, "method": "PreCommitSector"}],
                              name_space='filscan')
         res = res['result']['data']
         if not isinstance(res, list) and not isinstance(res, slice): return None
         return [[s['to'], s['args']['SectorNumber']] for s in res]
 
     def precommitsectorsV2(self):
-        res = requests.get(
-            'https://filfox.info/api/v1/message/list?pageSize=5&page=0&method=PreCommitSector')
+        res = requests.get('https://filfox.info/api/v1/message/list?pageSize=5&page=0&method=PreCommitSector')
         if res.status_code != 200:
             return None
         res = json.loads(res.text)
