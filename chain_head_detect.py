@@ -78,6 +78,7 @@ def loop_check_apis():
             conn_manager.do_check_StateMinerSectorAllocated(tipset, miners, 0, 1172579)
             conn_manager.do_check_ChainGetParentReceipts(tipset)
             conn_manager.do_check_ChainGetBlockMessages(tipset)
+            print("|-- ---------------------round finished!---------------------\n")
         except Exception as e:
             logging.exception(e)
         sleep(dur)

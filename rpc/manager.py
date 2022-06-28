@@ -138,7 +138,7 @@ class _conns_manager:
 
             if match:
                 match = d_0 == to_josn(res[idx]['result'], skip) if checker is None else checker(res[0]['result'],
-                                                                                                 res[idx]['result'])
+                    res[idx]['result'])
 
             if error and not match: break
 
@@ -183,7 +183,7 @@ class _conns_manager:
         for _, blk in enumerate(tipset['blocks']):
             self.do_check_result(tipset, "ChainReadObj", [blk['Messages']], displayName='BlockMessages')
             self.do_check_result(tipset, 'ChainReadObj', [blk['ParentMessageReceipts']],
-                                 displayName='ParentMessageReceipts')
+                displayName='ParentMessageReceipts')
 
     def do_check_StateMinerStuff(self, tipset, addresses):
         miners = addresses[:2]
@@ -253,7 +253,7 @@ class _conns_manager:
                         addresses[idx], v))
                 return
             partitions, _, _ = self.do_check_result(tipset, "StateMinerPartitions",
-                                                    [miner, deadlines['Index'], parent_key])
+                [miner, deadlines['Index'], parent_key])
 
             if not dict_exists_path(partitions, 'result'):
                 continue
@@ -298,8 +298,8 @@ class _conns_manager:
 
         msg['Nonce'] = actor['result']['Nonce']
         self.do_check_result(tipset, 'GasEstimateMessageGas',
-                             [msg, {'MaxFee': '0', 'GasOverEstimation': 1.25}, ts_keys], skip=['CID'],
-                             checker=lambda l, v: l['GasLimit'] == v['GasLimit'])
+            [msg, {'MaxFee': '0', 'GasOverEstimation': 1.25}, ts_keys], skip=['CID'],
+            checker=lambda l, v: l['GasLimit'] == v['GasLimit'])
         return
 
     def do_check_ChainGetPath(self, tipset):
