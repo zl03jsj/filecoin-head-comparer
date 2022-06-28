@@ -7,14 +7,15 @@ from rpc.utils import dict_exists_path, is_error
 
 
 class _thread(Thread):
-    def __init__(self, func, args=()):
+    def __init__(self, func, args=(), version="v0"):
         super(_thread, self).__init__()
         self.func = func
         self.args = args
+        self.version = version
 
     def run(self):
         try:
-            self.result = self.func(*self.args)
+            self.result = self.func(*self.args, version=self.version)
         except Exception as e:
             print("method:%s, params:%s, err:%s\n" % (self.args[0], self.args[1], e))
 
@@ -60,11 +61,11 @@ class _conns_manager:
             raise ValueError('conns required to be list[conn]')
         self.conns.append(c)
 
-    def post(self, method, params=None):
+    def post(self, method, params=None, version="v0"):
         ress = []
         threads = []
         for idx, val in enumerate(self.conns):
-            t = _thread(func=val.post, args=(method, params))
+            t = _thread(func=val.post, args=(method, params), version=version)
             threads.append(t)
             t.start()
         for index, t in enumerate(threads):
@@ -122,9 +123,9 @@ class _conns_manager:
 
         return res, same_height, matchs
 
-    def do_check_result(self, tipset, method, params, displayName=None, skip=[], checker=None):
+    def do_check_result(self, tipset, method, params, displayName=None, skip=[], checker=None, version="v0"):
         check_info = {'tipset': tipset, 'method': method, 'params': params}
-        res = self.post(check_info['method'], check_info['params'])
+        res = self.post(check_info['method'], check_info['params'], version=version)
 
         match = True
         error = is_error(res[0])
@@ -173,6 +174,9 @@ class _conns_manager:
         for idx in range(1, 9):
             params[1] = idx
             self.do_check_result(tipset, 'ChainGetRandomnessFromBeacon', params)
+
+    def do_check_BeaconGetEntry(self, tipset):
+        self.do_check_result(tipset, 'BeaconGetEntry', [tipset['height']], version='v1')
 
     def do_check_ChainGetBlockMessages(self, tipset):
         if not self.is_check_slow_apis(): return

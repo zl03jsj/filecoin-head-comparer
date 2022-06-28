@@ -9,7 +9,7 @@ from rpc.utils import is_error, dict_exists_path
 class _conn:
     def __init__(self, name, url, token, debug=False):
         self.name = name
-        self.url = url
+        self.base_url = url
         self.header = None
         self.debug = debug
 
@@ -25,7 +25,11 @@ class _conn:
         return {'cids': cids, 'blocks': res['Blocks'], 'height': blks["Height"] if "Height" in blks else blks['height'],
                 'name': self.name}
 
-    def post(self, method, params, name_space='Filecoin'):
+    def url(self, version="v0"):
+        return "{base_url}{slash}rpc/{method_ver}".format(base_url=self.base_url,
+            slash='' if self.base_url[len(self.base_url) - 1] == '/' else '/', method_ver=version)
+
+    def post(self, method, params, name_space='Filecoin', version="v0"):
         # {"id": 1, "jsonrpc": "2.0", "params": [{"offset_range": {"start": 0, "count": 25}, "method": "PreCommitSector"}],
         #  "method": "filscan.GetMessages"}
         method = name_space + '.' + method
@@ -38,7 +42,7 @@ class _conn:
             raise ValueError('params required to be list')
 
         self.payload["params"] = params
-        res = requests.request("POST", self.url, headers=self.header, data=json.dumps(self.payload))
+        res = requests.request("POST", self.url(version=version), headers=self.header, data=json.dumps(self.payload))
         if self.debug:
             print(''' 
 -> http post information: <-
@@ -46,8 +50,7 @@ class _conn:
    http response: %s
             ''' % (method, params, res.text))
         if res.status_code != 200:
-            print("unexpected, post to %-15s failed, status_code=%d, text:%s" % (
-                self.name, res.status_code, res.text))
+            print("unexpected, post to %-15s failed, status_code=%d, text:%s" % (self.name, res.status_code, res.text))
 
             return
         if method == 'Filecoin.ChainHead':
@@ -107,7 +110,6 @@ class _conn:
     def list_miners(self):
         return self.post("StateListMiners", [None])
 
-
     def state_get_actor(self, addr):
         return self.post("StateGetActor", [addr, None])
 
@@ -144,7 +146,7 @@ class _precommit_sector_provider:
     def precommitsectors(self):
         # curl https://api.filscan.io:8700/rpc/v1 -X POST -H "Content-Type: application/json"  -d '{"id":1,"jsonrpc":"2.0","params":[{"offset_range":{"start":0,"count":5},"method":"PreCommitSector"}],"method":"filscan.GetMessages"}'
         res = self.conn.post("GetMessages", [{"offset_range": {"start": 0, "count": 5}, "method": "PreCommitSector"}],
-                             name_space='filscan')
+            name_space='filscan', version='v1')
         res = res['result']['data']
         if not isinstance(res, list) and not isinstance(res, slice): return None
         return [[s['to'], s['args']['SectorNumber']] for s in res]

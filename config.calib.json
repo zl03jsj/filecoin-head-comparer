@@ -2,8 +2,8 @@
   "always_display_params": false,
   "always_display_result": false,
   "check_slow_apis": true,
-  "precommit_url": "https://calibration.filscan.io:8700/rpc/v1",
-  "precommit_url_main": "https://api.filscan.io:8700/rpc/v1",
+  "precommit_url": "https://calibration.filscan.io:8700/",
+  "precommit_url_main": "https://api.filscan.io:8700/",
   "miners": [
     "t026944",
     "t08334",
@@ -29,37 +29,37 @@
     {
       "enable": "yes",
       "name": "lotus-calibnet",
-      "url": "http://192.168.200.113:1234/rpc/v0",
+      "url": "http://192.168.200.113:1234/",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.MmlA76klWy-MgI9Bi1cAWdm9dQ1HxsXx3LKkeLMS1bo"
     },
     {
       "enable": "no",
       "name": "lotus",
-      "url": "http://139.196.147.220:1234/rpc/v0",
+      "url": "http://139.196.147.220:1234/",
       "token": null
     },
     {
       "enable": "no",
       "name": "lotus",
-      "url": "http://47.115.22.33:1234/rpc/v0",
+      "url": "http://47.115.22.33:1234/",
       "token": null
     },
     {
       "enable": "no",
       "name": "venus-release",
-      "url": "http://120.78.159.125:88/rpc/v0",
+      "url": "http://120.78.159.125:88/",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.oLkKAMWEiUA6oK-stwd3Spiwrx9TlGOuVFgrgn7JPwU"
     },
     {
       "enable": "yes",
       "name": "venus-200.15-calibnet",
-      "url": "http://192.168.200.15:3453/rpc/v0",
+      "url": "http://192.168.200.15:3453/",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiMjAwLTI4IiwicGVybSI6InNpZ24iLCJleHQiOiIifQ.CTnQzdQqTg3S3JaILXvbJyOjCvboqr2YLxwLbqoO-PE"
     },
     {
       "enable": "no",
       "name": "venus01_mainnet",
-      "url": "http://120.79.136.65:3453/rpc/v0",
+      "url": "http://120.79.136.65:3453/",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiY3EtMTIiLCJwZXJtIjoid3JpdGUiLCJleHQiOiIifQ.mrZFyGPduZxoUCnUAtQgCbncSAgJtgnAKGQqr7bXQZk"
     }
   ],
