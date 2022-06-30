@@ -27,7 +27,7 @@ actors.extend(accounts)
 
 print('____________check chain head match with following nodes____________')
 for idx, c in enumerate(conn_manager.conns):
-    print("%d, %s, %s" % (idx, c.name, c.url))
+    print("%d, %s, %s" % (idx, c.name, c.base_url))
 print('-------------------------------------------------------------------\n')
 
 
