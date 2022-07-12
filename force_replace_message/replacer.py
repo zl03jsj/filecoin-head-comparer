@@ -121,7 +121,7 @@ class message_replacer:
         print('--> 从lotus获取miner(%s)详细信息:' % self.lts_client.base_url)
         miner_info = self.lts_client.state_miner_info(miner)
 
-        if False:
+        if True:
             control_actor_ids = miner_info['ControlAddresses']
 
             if control_actor_ids is None or len(control_actor_ids) == 0:
@@ -138,7 +138,7 @@ class message_replacer:
 
             control_addr = self.lts_client.state_account_key(
                 actor_id=control_actor)
-        else:
+        else:  # 这一段为测试代码...
             control_actor = 't01001'
             control_addr = 't3wknhyskfndkpusfyl5o2uh4724radjxesfortxigrewti3izvjhsoucf5y22wuvq6ag4h2a62nzp42rfnq6q'
 
