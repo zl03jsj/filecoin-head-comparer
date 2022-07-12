@@ -93,10 +93,10 @@ class _args:
             return False, 'control-idx:{idx}, 设置错误,或者启用交互模式'.format(idx=self.ctrl_idx)
         return True, ''
 
-        def main() -> None:
-            print('--> this is just a test.....\n')
-            fruit = must_select('--> 选择你想吃的水果:', ['apple', 'banana', 'grape', 'peach'])
-            print('--> 你选择的水果是: %s\n' % (fruit))
+def main() -> None:
+    print('--> this is just a test.....\n')
+    fruit = must_select('--> 选择你想吃的水果:', ['apple', 'banana', 'grape', 'peach'])
+    print('--> 你选择的水果是: %s\n' % (fruit))
 
-        if __name__ == "__main__":
-            main()
+if __name__ == "__main__":
+    main()
