@@ -39,16 +39,30 @@
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.L-lDO7Zb7m4aeWCJWLGRRvY0i35HHzytEDYaxcGIZfM"
     },
     {
-      "enable": "yes",
+      "enable": "no",
+      "comment": "公司公开节点",
       "name": "lotus",
       "url": "http://139.196.147.220:1234/",
       "token": null
     },
     {
       "enable": "no",
+      "comment": "公司公开节点",
       "name": "lotus",
       "url": "http://47.115.22.33:1234/",
       "token": null
+    },
+    {
+      "enable": "yes",
+      "name": "lotus",
+      "url": "http://192.168.200.157:1234/",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.kSnPii9iBEn-j8jpH4-E43H9GvekqtOImOr324zfFeQ"
+    },
+    {
+      "enable": "yes",
+      "name": "venus",
+      "url": "http://192.168.200.157:3453/",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZGVmYXVsdExvY2FsVG9rZW4iLCJwZXJtIjoiYWRtaW4iLCJleHQiOiIifQ.IXay8m_ea0htnlZDIqGtsguyLujNPV6d9zd0nLHmYFA"
     },
     {
       "enable": "no",

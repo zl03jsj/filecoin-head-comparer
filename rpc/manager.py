@@ -77,7 +77,8 @@ class _conns_manager:
     def do_check_heads(self):
         res = self.post("ChainHead")
 
-        time_stamp = int(time.time())
+        t = time.time()
+        time_window = int(t)%30
 
         matchs = True
         d_0 = json.dumps((res[0]['height'], res[0]['cids']))
@@ -105,21 +106,25 @@ class _conns_manager:
 
         self.latest_match = matchs
 
-        print('|-ChainHead, height:%d, block:%d, head->%s' % (
-            res[0]['height'], len(res[0]['cids']), '100-%match\n' if matchs else 'mis-match'))
+        # fmt_time =  time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t))
+
+        print('|-ChainHead, height:%d, block:%d, head->%s, window:%d(s), time:%s' % (
+            res[0]['height'], len(res[0]['cids']), '100%-match' if matchs else 'dis-match',
+            time_window, time.strftime("%H:%M:%S", time.localtime(t))))
 
         same_height = True
         if False == matchs:
-            away = time_stamp % 30
+            away = time_window % 30
             if away > 12:
-                print("|- this mis-matching will cause [INSULAR] block")
+                print("|- this dis-match will cause [INSULAR] block")
             for idx, v in enumerate(res):
                 if v is None: continue
                 if same_height and res[idx]['height'] != res[0]['height']:
                     same_height = False
                 print("|- %+16s: height:%d, block:%d, away from time window:%d" % (
                     v['name'], v['height'], len(v['cids']), away))
-            print()
+
+        print()
 
         return res, same_height, matchs
 
@@ -145,7 +150,7 @@ class _conns_manager:
         printed = False
         print('|--  method:%s, height:%d, API->%s' % (
             displayName if displayName is not None else method, tipset['height'],
-            ('100-%match' if not error else '100-%match [but some errors occurs]') if match else 'mis-match'))
+            ('100%-match' if not error else '100%-match [but some errors occurs]') if match else 'dis-match'))
 
         if self.show_params or not match or error:
             print('|-- -> params: %s' % (params));
@@ -293,7 +298,7 @@ class _conns_manager:
         ts_keys = tipset['cids']
         actor, matches, errors = self.do_check_result(tipset, 'StateGetActor', [msg['From'], ts_keys], checker=checker)
         if not matches or errors:
-            print("|- check StateGetActor mis-match or error occurs, 'EstimateGas' won't continue")
+            print("|- check StateGetActor dis-match or error occurs, 'EstimateGas' won't continue")
             return
 
         msg['Nonce'] = actor['result']['Nonce']
