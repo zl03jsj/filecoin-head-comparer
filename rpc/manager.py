@@ -181,7 +181,7 @@ class _conns_manager:
             self.do_check_result(tipset, 'ChainGetRandomnessFromBeacon', params)
 
     def do_check_BeaconGetEntry(self, tipset):
-        self.do_check_result(tipset, 'BeaconGetEntry', [tipset['height']], version='v1')
+        self.do_check_result(tipset, 'StateGetBeaconEntry', [tipset['height']], version='v1')
 
     def do_check_ChainGetBlockMessages(self, tipset):
         if not self.is_check_slow_apis(): return
@@ -210,9 +210,9 @@ class _conns_manager:
             self.do_check_result(tipset, 'StateMinerPower', params)
             self.do_check_result(tipset, 'MinerGetBaseInfo', [miner, block['Height'], block['Parents']])
             self.do_check_result(tipset, "StateMinerInfo", params, checker=checker)
-            self.do_check_result(tipset, "StateMinerAvailableBalance", params)
-            self.do_check_result(tipset, "StateMinerRecoveries", params)
-            self.do_check_result(tipset, "StateMinerFaults", params)
+            self.do_check_result(tipset, "StateMinerAvailableBalance", params, checker=checker)
+            self.do_check_result(tipset, "StateMinerRecoveries", params, checker=checker)
+            self.do_check_result(tipset, "StateMinerFaults", params, checker=checker)
             self.do_check_result(tipset, "StateMinerProvingDeadline", params)
             self.do_check_result(tipset, "StateMinerDeadlines", params)
             self.do_check_result(tipset, "StateMinerSectorCount", params, checker=checker)

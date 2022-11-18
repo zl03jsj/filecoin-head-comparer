@@ -55,11 +55,23 @@
     {
       "enable": "yes",
       "name": "lotus",
+      "url": "http://192.168.200.122:1234/",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.GpW532xdsDeZOxjt5AyrofQrObPziyjM5VddHUy4btE"
+    },
+    {
+      "enable": "yes",
+      "name": "venus",
+      "url": "http://192.168.200.132:3453/",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibnYxNy1jYWxpYiIsInBlcm0iOiJhZG1pbiIsImV4dCI6IiJ9.reRfI1JwbfJs3R5DFPutWjnX8MghBjfgx3Lf5_U3PkA"
+    },
+    {
+      "enable": "no",
+      "name": "lotus",
       "url": "http://192.168.200.157:1234/",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.kSnPii9iBEn-j8jpH4-E43H9GvekqtOImOr324zfFeQ"
     },
     {
-      "enable": "yes",
+      "enable": "no",
       "name": "venus",
       "url": "http://192.168.200.157:3453/",
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZGVmYXVsdExvY2FsVG9rZW4iLCJwZXJtIjoiYWRtaW4iLCJleHQiOiIifQ.IXay8m_ea0htnlZDIqGtsguyLujNPV6d9zd0nLHmYFA"
